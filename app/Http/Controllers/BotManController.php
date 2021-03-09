@@ -33,16 +33,6 @@ class BotManController extends Controller
      * Loaded through routes/botman.php
      * @param BotMan $bot
      */
-    public function vinConversation(BotMan $bot)
-    {
-        $bot->startConversation(new VinConversation($bot));
-    }
-
-    public function uniqueOrderConversation(BotMan $bot)
-    {
-        $bot->startConversation(new UniqueOrderConversation($bot));
-    }
-
     public function serviceOrderConversation(BotMan $bot)
     {
         $bot->startConversation(new ServiceOrderConversation($bot));
