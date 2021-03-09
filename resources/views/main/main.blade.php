@@ -3,7 +3,6 @@
 @section('title', 'COLORIT')
 
 @section('content')
-
     <div id="canvas" class="">
         <div id="box_wrapper" class="">
             <!-- template sections -->
@@ -142,7 +141,7 @@
                     </section>
                 </div>
             </div>
-            <section class="intro_section hello page_mainslider cs all-scr-cover image-dependant ">
+            <section class="intro_section hello page_mainslider cs all-scr-cover image-dependant " id="home">
                 <div class="flexslider " data-nav="true" data-dots="false">
                     <ul class="slides">
                         <li class="text-center">
@@ -240,8 +239,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </section>

@@ -12,7 +12,7 @@
     <!-- Page Title -->
     <title>COLORIT</title>
     <!-- Favicon Icon -->
-    <link rel="shortcut icon" href="{{asset('assets/images/red2.png')}}" type="image/png">
+{{--    <link rel="shortcut icon" href="{{asset('assets/images/red2.png')}}" type="image/png">--}}
     <!-- All css here -->
     <link href="https://fonts.googleapis.com/css?family=Russo+One&display=swap&subset=cyrillic" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,800&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
     </div>
 
     <div id="app">
-        <notifications group="info" :position="'top left'" :max="5"/>
+{{--        <notifications group="info" :position="'top left'" :max="5"/>--}}
         @yield('content')
     </div>
 
@@ -66,6 +66,8 @@
     <script type='text/javascript' src="{{ asset('js/woo.js?ver=2.0.0')}}"></script>
     <script type='text/javascript' src="{{ asset('js/selectize.min.js?ver=2.0.0')}}"></script>
     <script type='text/javascript' src="{{ asset('js/main.js?ver=2.0.0')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-scrollto"></script>
     <script src="{{asset('js/app.js')}}"></script>
 
 </body>

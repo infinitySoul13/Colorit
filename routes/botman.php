@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\BotManController;
-use App\Vinrequest;
 use App\Product;
 use App\User;
 use BotMan\BotMan\BotMan;

@@ -320,7 +320,9 @@
         jQuery('.toggle_header').on('click', function() {
             jQuery(this).closest('.page_toplogo').next('.header_v1_wrapper').addClass('active').parent('.transparent_wrapper').addClass('active');
         });
-
+        jQuery('.menu-item').on('click', function() {
+            jQuery(this).closest('.header_v1_wrapper').removeClass('active').parent('.transparent_wrapper').removeClass('active');
+        });
         jQuery('.toggle_header_close').on('click', function() {
             jQuery(this).closest('.header_v1_wrapper').removeClass('active').parent('.transparent_wrapper').removeClass('active');
         });

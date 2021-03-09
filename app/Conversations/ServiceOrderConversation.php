@@ -35,7 +35,7 @@ class ServiceOrderConversation extends Conversation
     {
         $telegramUser = $bot->getUser()->getId();
         $this->bot = $bot;
-        $this->user = User::where("telegram_chat_id", $telegramUser)->first();
+//        $this->user = User::where("telegram_chat_id", $telegramUser)->first();
         $this->chat_id = $telegramUser;
     }
     /**
