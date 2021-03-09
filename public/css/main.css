@@ -9181,7 +9181,7 @@ a.abs-link:hover {
 .logo img {
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
-    max-width: 82px;
+    max-width: 130px;
 }
 
 @media (max-width: 768px) {
@@ -13143,7 +13143,7 @@ body.active-side-header.slide-right .page_header_side {
 }
 
 .wrapper_v1.affix .toplogo1 .logo img {
-    max-width: 70px;
+    max-width: 130px;
 }
 
 @media (min-width: 1200px) {
