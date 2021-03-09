@@ -16,16 +16,19 @@ mix.alias({
  |
  */
 
-// mix.js('resources/js/app.js', 'public/js')
-//    .sass('resources/sass/app.scss', 'public/css');
-
 mix.js('resources/js/app.js', 'public/js')
-    .version();
+   .sass('resources/sass/app.scss', 'public/css');
+// mix.js('resources/js/app.js', 'public/js')
+//     .vue()
+//     .sass('resources/sass/app.scss', 'public/css');
 
-mix.sass('resources/sass/app.scss', 'public/css')
-    .version();
+// mix.js('resources/js/app.js', 'public/js')
+//     .version();
+//
+// mix.sass('resources/sass/app.scss', 'public/css')
+//     .version();
 
-mix.copyDirectory('resources/assets', 'public/assets');
+// mix.copyDirectory('resources/assets', 'public/assets');
 
 // mix.alias({
 //     '@': 'resources/assets/js',

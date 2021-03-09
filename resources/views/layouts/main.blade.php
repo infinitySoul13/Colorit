@@ -27,6 +27,7 @@
     <link rel='stylesheet' id='bootstrap-css' href="{{ asset('css/bootstrap.min.css?ver=2.0.0')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-animations-css' href="{{ asset('css/animations.css?ver=2.0.0')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-main-css' href="{{ asset('css/main.css?ver=2.0.0')}}" type='text/css' media='all' />
+    <link rel='stylesheet' href="{{ asset('css/app.css?ver=2.0.0')}}" type='text/css' media='all' />
 </head>
 
 <body class="home page-template page-template-page-templates page-template-full-width page-template-page-templatesfull-width-php page page-id-9 woocommerce-no-js masthead-fixed full-width footer-widgets grid">
