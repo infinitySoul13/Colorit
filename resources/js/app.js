@@ -24,11 +24,8 @@ import Notifications from 'vue-notification'
 import CallbackForm from  './components/CallbackForm';
 import CartCountIndex from  './components/CartCountIndex';
 import Cart from  './components/Cart';
-import Vin from  './components/Vin';
 import History from  './components/DataTable';
-import Tabs from  './components/Tabs';
 import UniqueOrder from "./components/UniqueOrder";
-import VendorSearch from "./components/VendorSearch";
 import Products from "./components/Products";
 import AdminProducts from "./pages/products/Index";
 import AdminCategories from "./pages/categories/Index";
@@ -44,10 +41,8 @@ Vue.component('add-to-cart-btn', AddToCartBtn);
 Vue.component('callback-form', CallbackForm);
 Vue.component('cart-count-index', CartCountIndex);
 Vue.component('cart', Cart);
-Vue.component('vin', Vin);
 Vue.component('history', History);
 Vue.component('u-order', UniqueOrder);
-Vue.component('vendor-search', VendorSearch);
 Vue.component('products', Products);
 Vue.component('admin-products', AdminProducts)
 Vue.component('admin-categories', AdminCategories)
@@ -63,30 +58,6 @@ Vue.use(VueCurrencyFilter,
         symbolSpacing: true
     })
 
-Vue.component('tabs', Tabs);
-Vue.component('tab', {
-    template: `        
-        <div v-show="isActive"><slot></slot></div>
-    `,
-    props: {
-        name: { required: true },
-        selected: { default: false}
-    },
-    data() {
-        return {
-            isActive: false
-        };
-    },
-    computed: {
-        href() {
-            return '#' + this.name.toLowerCase().replace(/ /g, '-');
-        }
-    },
-    mounted() {
-        this.isActive = this.selected;
-    }
-});
-// import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 Vue.use(BootstrapVue)
@@ -105,6 +76,22 @@ Vue.use(skeleton);
 import "vue-multiselect/dist/vue-multiselect.min.css"
 import Multiselect from 'vue-multiselect';
 Vue.component('multiselect', Multiselect);
+
+var VueScrollTo = require('vue-scrollto');
+Vue.use(VueScrollTo)
+Vue.use(VueScrollTo, {
+    container: "body",
+    duration: 500,
+    easing: "ease",
+    offset: 0,
+    force: true,
+    cancelable: true,
+    onStart: false,
+    onDone: false,
+    onCancel: false,
+    x: false,
+    y: true
+})
 
 const app = new Vue({
     store,

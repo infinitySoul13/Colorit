@@ -25,7 +25,6 @@
                         </div>
                     </div>
                 </section>
-
                 <div class="header_v1_wrapper">
                     <header class="page_header header_white header_v1 toggler_xxs_right">
                         <div class="container-fluid">
@@ -42,22 +41,22 @@
                                             <ul id="menu-main-menu" class="sf-menu nav-menu nav">
                                                 <li id="menu-item-18"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-9 current_page_item menu-item-has-children menu-item-18">
-                                                    <a href="#"><span>Home</span></a></li>
+                                                    <a href="#" v-scroll-to="'#home'"><span>Home</span></a></li>
                                                 <li id="menu-item-1300"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1300">
-                                                    <a href="#about"><span>About</span></a></li>
+                                                    <a href="#" v-scroll-to="'#about'"><span>About</span></a></li>
                                                 <li id="menu-item-90"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-90">
-                                                    <a href="#our-services"><span>Our Services</span></a></li>
+                                                    <a href="#" v-scroll-to="'#services'"><span>Our Services</span></a></li>
                                                 <li id="menu-item-1187"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1187">
-                                                    <a href="#designs"><span>Designs</span></a></li>
+                                                    <a href="#" v-scroll-to="'#designs'"><span>Designs</span></a></li>
                                                 <li id="menu-item-1309"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1309">
-                                                    <a href="#faq"><span>FAQ</span></a></li>
+                                                    <a href="#" v-scroll-to="'#faq'"><span>FAQ</span></a></li>
                                                 <li id="menu-item-1331"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1331">
-                                                    <a href="#contact"><span>Contact</span></a></li>
+                                                    <a href="#" v-scroll-to="'#contact'"><span>Contact</span></a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -173,7 +172,7 @@
                                                             <i class="fa fa-upload rightpadding_10"></i>
                                                             Upload Files
                                                         </a>
-                                                        <a href="#contact" target="_self"
+                                                        <a href="#" v-scroll-to="'#contact'" target="_self"
                                                            class="theme_button bg_button color1 min_width_button left ">
                                                             <i class="fa fa-pencil rightpadding_10"></i>
                                                             Request Quote
@@ -197,26 +196,16 @@
             </section>
             <!-- eof intro_section -->
             <div class="fw-page-builder-content">
-                <section
-                        class="fw-main-row  cs main_color2 half_cs section_padding_top_65 section_padding_bottom_65 columns_padding_80"
-                        id="subscribe">
-
+                <section class="fw-main-row  cs main_color2 half_cs section_padding_top_65 section_padding_bottom_65 columns_padding_80" id="subscribe">
                     <div class="container">
                         <div class="row flex-wrap v-center">
-
                             <div class="col-xs-12 col-sm-6 text-sm-right text-center">
-
-
                                 <div class="text-block shortcode">
                                     <div class="small-text greylinks"><a href="mailto:#">example@example.com</a></div>
                                     <p class="hero black">0-800-234-5678</p>
                                 </div>
                             </div>
-
-
                             <div class="col-xs-12 col-sm-6 text-sm-left text-center">
-
-
                                 <div class="text-block shortcode">
                                     <div>
                                         <form id="mc4wp-form-1" class="mc4wp-form mc4wp-form-33" method="post"
@@ -449,9 +438,7 @@
                         </div>
                     </div>
                 </section>
-                <section
-                        class="fw-main-row  cs main_color5 section_padding_top_150 section_padding_bottom_150 parallax overlay_color"
-                        style="background-image:url(/img/progress.jpg);" id="featured-video">
+                <section class="fw-main-row  cs main_color5 section_padding_top_150 section_padding_bottom_150 parallax overlay_color" style="background-image:url(/img/progress.jpg);" id="featured-video">
                     <div class="container">
                         <div class="row">
                             <div class="col-xs-12 text-center">
@@ -604,17 +591,10 @@
                         </div>
                     </div>
                 </section>
-
-                <section
-                        class="fw-main-row  ls section_padding_top_0 section_padding_bottom_0 columns_padding_0 fluid_padding_0"
-                        id="gallery">
-
+                <section class="fw-main-row  ls section_padding_top_0 section_padding_bottom_0 columns_padding_0 fluid_padding_0" id="gallery">
                     <div class="container-fluid">
                         <div class="row">
-
                             <div class="col-xs-12">
-
-
                                 <div id="widget_portfolio_carousel_5ff0994a197d7" class="owl-carousel gallery-carousel "
                                      data-nav="1" data-dots="" data-loop="1" data-center="1" data-autoplay="1"
                                      data-autopaly-timeout="5000" data-margin="0" data-responsive-xxs="1"
@@ -839,8 +819,7 @@
                         </div>
                     </div>
                 </section>
-                <section class="fw-main-row  ls section_padding_top_125 section_padding_bottom_140 columns_padding_30"
-                         id="faq">
+                <section class="fw-main-row  ls section_padding_top_125 section_padding_bottom_140 columns_padding_30" id="faq">
                     <div class="container">
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
