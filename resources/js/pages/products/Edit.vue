@@ -334,6 +334,10 @@
                };
                 this.$store.dispatch('deleteFile', data).then(resp => {
                     // this.product = resp.data.product;
+                    this.file_loading = true;
+                }).catch(function (error) {
+                    console.log(error);
+                    this.file_loading = true;
                 });
             },
             saveImages() {
@@ -348,6 +352,9 @@
                     this.edit_product = resp.data.product;
                     this.new_files = [];
                     this.file_loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                    this.file_loading = true;
                 });
             },
             handleFiles() {
@@ -399,6 +406,9 @@
 </script>
 
 <style scoped>
+    .custom-select option {
+        color: black !important;
+    }
     @media screen and (min-width: 991.98px) {
         .min {
             min-width: 300px !important;

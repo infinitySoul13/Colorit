@@ -337,6 +337,9 @@
 </script>
 
 <style scoped>
+    .custom-select option {
+        color: black !important;
+    }
     @media screen and (min-width: 991.98px) {
         .min {
             min-width: 300px !important;

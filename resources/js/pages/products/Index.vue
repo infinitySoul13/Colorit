@@ -36,7 +36,7 @@
 <!--&lt;!&ndash;            </div>&ndash;&gt;-->
 <!--        </div>-->
         <b-row class="m-auto w-100 h-100 align-items-center" v-if="!initial_loading">
-            <b-button variant="primary" class="mt-1 mb-1 float-right" :href="'admin/products/create'">
+            <b-button variant="primary" class="mt-2 mb-2 float-right" :href="'admin/products/create'">
                 Create product
             </b-button>
         </b-row>

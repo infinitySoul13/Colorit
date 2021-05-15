@@ -361,7 +361,6 @@ input[type="tel"],
 input[type="number"],
 input[type="date"],
 textarea,
-select,
 .form-control {
     height: 60px;
     box-shadow: none;
@@ -383,7 +382,6 @@ input[type="tel"]+.theme_button,
 input[type="number"]+.theme_button,
 input[type="date"]+.theme_button,
 textarea+.theme_button,
-select+.theme_button,
 .form-control+.theme_button {
     position: absolute;
     padding: 0;
@@ -430,9 +428,6 @@ input[type="date"]+.theme_button:active,
 textarea+.theme_button:hover,
 textarea+.theme_button:focus,
 textarea+.theme_button:active,
-select+.theme_button:hover,
-select+.theme_button:focus,
-select+.theme_button:active,
 .form-control+.theme_button:hover,
 .form-control+.theme_button:focus,
 .form-control+.theme_button:active {
@@ -467,9 +462,6 @@ input[type="date"]+.theme_button[class*="color"]:active,
 textarea+.theme_button[class*="color"]:hover,
 textarea+.theme_button[class*="color"]:focus,
 textarea+.theme_button[class*="color"]:active,
-select+.theme_button[class*="color"]:hover,
-select+.theme_button[class*="color"]:focus,
-select+.theme_button[class*="color"]:active,
 .form-control+.theme_button[class*="color"]:hover,
 .form-control+.theme_button[class*="color"]:focus,
 .form-control+.theme_button[class*="color"]:active {
@@ -504,9 +496,6 @@ select+.theme_button[class*="color"]:active,
 .cs textarea+.theme_button[class*="color"]:hover,
 .cs textarea+.theme_button[class*="color"]:focus,
 .cs textarea+.theme_button[class*="color"]:active,
-.cs select+.theme_button[class*="color"]:hover,
-.cs select+.theme_button[class*="color"]:focus,
-.cs select+.theme_button[class*="color"]:active,
 .cs .form-control+.theme_button[class*="color"]:hover,
 .cs .form-control+.theme_button[class*="color"]:focus,
 .cs .form-control+.theme_button[class*="color"]:active {
@@ -523,7 +512,6 @@ aside input[type="tel"]+.theme_button,
 aside input[type="number"]+.theme_button,
 aside input[type="date"]+.theme_button,
 aside textarea+.theme_button,
-aside select+.theme_button,
 aside .form-control+.theme_button {
     padding: 0;
 }
@@ -537,7 +525,6 @@ aside .form-control+.theme_button {
 .input-text-center input[type="number"],
 .input-text-center input[type="date"],
 .input-text-center textarea,
-.input-text-center select,
 .input-text-center .form-control {
     text-align: center;
 }
@@ -551,7 +538,6 @@ input[type="tel"] .with_button,
 input[type="number"] .with_button,
 input[type="date"] .with_button,
 textarea .with_button,
-select .with_button,
 .form-control .with_button {
     padding-right: 90px;
 }
@@ -566,7 +552,6 @@ select .with_button,
     input[type="number"],
     input[type="date"],
     textarea,
-    select,
     .form-control {
         height: 80px;
         padding: 21px 40px 23px;
@@ -580,7 +565,6 @@ select .with_button,
     input[type="number"] .with_button,
     input[type="date"] .with_button,
     textarea .with_button,
-    select .with_button,
     .form-control .with_button {
         padding-right: 90px;
     }
@@ -593,7 +577,6 @@ select .with_button,
     input[type="number"]+.theme_button,
     input[type="date"]+.theme_button,
     textarea+.theme_button,
-    select+.theme_button,
     .form-control+.theme_button {
         width: 80px;
         height: 80px;
@@ -895,7 +878,7 @@ input[type=radio] {
 
 .select2-container--default .select2-selection--single {
     border: none;
-    background-color: #f2f2f2;
+    background-color: black;
     border-radius: 0;
 }
 

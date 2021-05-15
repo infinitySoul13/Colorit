@@ -74,37 +74,6 @@
                         class="my-0"
                 />
             </b-col>
-            <b-col md="12" class="my-1" v-if="selected.length>1">
-                <b-row class="m-auto p-3" style="border-top: 1px solid #d8dbe0;">
-                    <b-col md="3">
-                        <b-button @click="selectAllRows" variant="primary" class="w-100 mr-1 mb-1">
-                            Select All
-                        </b-button>
-                    </b-col>
-                    <b-col md="3">
-                        <b-button @click="clearSelected" variant="primary" class="w-100 mr-1 mb-1">
-                            Clear Selected
-                        </b-button>
-                    </b-col>
-                    <b-col md="3">
-                        <b-button v-if="products[0].deleted_at==null" @click="removeAll" variant="primary" class="w-100 mr-1 mb-1">
-                            Remove Selected
-                        </b-button>
-                        <b-button v-else @click="restoreAll" variant="primary" class="w-100 mr-1 mb-1">
-                            Restore Selected
-                        </b-button>
-                    </b-col>
-                    <b-col md="3">
-                        <b-button @click="setInitialCategory" variant="primary" class="w-100 mt-1 mb-1">Set Category</b-button>
-                    </b-col>
-                    <!--                    <b-col md="4">-->
-                    <!--                        <b-button @click="saveAll(true, 'is_active')" variant="primary" class="mt-1 mb-1">Показать выделенные на сайте</b-button>-->
-                    <!--                    </b-col>-->
-                    <!--                    <b-col md="4">-->
-                    <!--                        <b-button @click="saveAll(false, 'is_active')" variant="primary" class="mt-1 mb-1">Скрыть выделенные на сайте</b-button>-->
-                    <!--                    </b-col>-->
-                </b-row>
-            </b-col>
         </b-row>
         <b-table
                 show-empty

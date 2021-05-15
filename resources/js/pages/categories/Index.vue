@@ -1,7 +1,5 @@
 <template>
     <b-container>
-        <notifications group="info"/>
-
         <b-modal id="modal-new-category" title="Add category">
             <div class="row w-100 m-auto">
                 <div class="col-12">
@@ -38,7 +36,7 @@
 
         <div class="row" v-if="!initial_loading">
             <div class="col-md-4 col-sm-12 mt-4 mb-4">
-                <b-button variant="primary" class="mt-4 mb-4" v-b-modal.modal-new-category>Add category</b-button>
+                <b-button variant="primary" class="mt-2 mb-2" v-b-modal.modal-new-category>Add category</b-button>
             </div>
         </div>
 
