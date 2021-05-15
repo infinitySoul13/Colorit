@@ -334,10 +334,10 @@
                };
                 this.$store.dispatch('deleteFile', data).then(resp => {
                     // this.product = resp.data.product;
-                    this.file_loading = true;
+                    this.file_loading = false;
                 }).catch(function (error) {
                     console.log(error);
-                    this.file_loading = true;
+                    this.file_loading = false;
                 });
             },
             saveImages() {
@@ -354,7 +354,7 @@
                     this.file_loading = false;
                 }).catch(function (error) {
                     console.log(error);
-                    this.file_loading = true;
+                    this.file_loading = false;
                 });
             },
             handleFiles() {
