@@ -147,7 +147,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         BenSampo\Enum\EnumServiceProvider::class,
-        ATehnix\LaravelVkRequester\VkRequesterServiceProvider::class,
         Telegram\Bot\Laravel\TelegramServiceProvider::class,
 
         /*
