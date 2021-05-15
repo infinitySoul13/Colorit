@@ -54,7 +54,6 @@ class CategoryController extends Controller
             {
                  $category = Category::create([
                      'title'=>$product->category,
-                     'words'=>[],
                  ]);
             }
         }
@@ -71,13 +70,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $title=$request->get('title');
-        $words=$request->get('words');
-        $img=$request->get('img');
         if($title == '') {
             return response()
                 ->json([
                     'status' => 'error',
-                    "message" => "Название категории не может быть пустым",
+                    "message" => "Category title cannot be empty",
                 ], 200);
         }
         $category= Category::where('title',$title)->first();
@@ -85,23 +82,17 @@ class CategoryController extends Controller
             return response()
                 ->json([
                     'status' => 'error',
-                    "message" => "Категория с таким названием уже существует",
+                    "message" => "Category with the same title already exists",
                 ], 200);
-        }
-        if($img =='') {
-            $img = '/assets/images/cat.png';
         }
         $category = Category::create([
             'title'=>$title,
-            'words'=>$words,
-            'img'=>$img,
         ]);
         return response()
             ->json([
-                'img' => $img,
                 'status' => 'success',
                 'category' => $category,
-                "message" => "Категория успешно добавлена",
+                "message" => "Category is added successfully",
             ], 200);
     }
 
@@ -111,22 +102,11 @@ class CategoryController extends Controller
         $value = $request->get("value");
 
         $category = Category::withTrashed()->find($id);
-        if($value !== "Другое") {
+        if($value !== "Uncategorized") {
 
             if($param == 'title')
             {
                 $products = Product::withTrashed()->where('category', $category->title)->update(['category' => $value]);
-            }
-            if($param == 'img')
-            {
-                if($value != '')
-                {
-                    $products = Product::withTrashed()->where('category', $category->title)->where('img', $category->img)->update(['img' => $value]);
-                }
-                else{
-                    $products = Product::withTrashed()->where('category', $category->title)->where('img', $category->img)->update(['img' => '/assets/images/cat.png']);
-                }
-
             }
             $category[$param] = $value;
             $category->save();
@@ -134,7 +114,7 @@ class CategoryController extends Controller
         return response()
             ->json([
                 'category' => $category,
-                "message" => "Изменения сохранены",
+                "message" => "Changes saved",
             ], 200);
     }
 
@@ -147,12 +127,12 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category= Category::find($id);
-        $products = Product::withTrashed()->where('category', $category['title'])->update(['category' => 'Другое']);
+        $products = Product::withTrashed()->where('category', $category['title'])->update(['category' => 'Uncategorized']);
         $category->delete();
 
         return response()
             ->json([
-                "message" => "Категория успешно удалена",
+                "message" => "Category is deleted successfully",
             ], 200);
     }
 
@@ -163,7 +143,7 @@ class CategoryController extends Controller
         return response()
             ->json([
                 "category" => $category,
-                "message" => "Категория восстановлена",
+                "message" => "Category is restored successfully",
             ], 200);
     }
 
@@ -174,7 +154,7 @@ class CategoryController extends Controller
 
         return response()
             ->json([
-                "message" => "Категория успешно полностью удалена",
+                "message" => "Category is destroyed successfully",
             ], 200);
     }
 }

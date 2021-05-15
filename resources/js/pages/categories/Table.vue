@@ -3,7 +3,7 @@
         <b-row>
             <b-col lg="6" class="my-1">
                 <b-form-group
-                        label="Сортировка"
+                        label="Sorting"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
@@ -23,10 +23,9 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
-
             <b-col lg="6" class="my-1">
                 <b-form-group
-                        label="Поиск"
+                        label="Search"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
@@ -38,18 +37,17 @@
                                 v-model="filter"
                                 type="search"
                                 id="filterInput"
-                                placeholder="Введите для поиска"
+                                placeholder="Print to search"
                         />
                         <b-input-group-append>
-                            <b-button :disabled="!filter" @click="filter = ''">Очистить</b-button>
+                            <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-form-group>
             </b-col>
-
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
-                        label="На странице"
+                        label="On page"
                         label-cols-sm="6"
                         label-cols-md="4"
                         label-cols-lg="3"
@@ -66,7 +64,6 @@
                     />
                 </b-form-group>
             </b-col>
-
             <b-col sm="7" md="6" class="my-1">
                 <b-pagination
                         v-model="currentPage"
@@ -76,6 +73,37 @@
                         size="sm"
                         class="my-0"
                 />
+            </b-col>
+            <b-col md="12" class="my-1" v-if="selected.length>1">
+                <b-row class="m-auto p-3" style="border-top: 1px solid #d8dbe0;">
+                    <b-col md="3">
+                        <b-button @click="selectAllRows" variant="primary" class="w-100 mr-1 mb-1">
+                            Select All
+                        </b-button>
+                    </b-col>
+                    <b-col md="3">
+                        <b-button @click="clearSelected" variant="primary" class="w-100 mr-1 mb-1">
+                            Clear Selected
+                        </b-button>
+                    </b-col>
+                    <b-col md="3">
+                        <b-button v-if="products[0].deleted_at==null" @click="removeAll" variant="primary" class="w-100 mr-1 mb-1">
+                            Remove Selected
+                        </b-button>
+                        <b-button v-else @click="restoreAll" variant="primary" class="w-100 mr-1 mb-1">
+                            Restore Selected
+                        </b-button>
+                    </b-col>
+                    <b-col md="3">
+                        <b-button @click="setInitialCategory" variant="primary" class="w-100 mt-1 mb-1">Set Category</b-button>
+                    </b-col>
+                    <!--                    <b-col md="4">-->
+                    <!--                        <b-button @click="saveAll(true, 'is_active')" variant="primary" class="mt-1 mb-1">Показать выделенные на сайте</b-button>-->
+                    <!--                    </b-col>-->
+                    <!--                    <b-col md="4">-->
+                    <!--                        <b-button @click="saveAll(false, 'is_active')" variant="primary" class="mt-1 mb-1">Скрыть выделенные на сайте</b-button>-->
+                    <!--                    </b-col>-->
+                </b-row>
             </b-col>
         </b-row>
         <b-table
@@ -93,15 +121,13 @@
                 :sort-direction="sortDirection"
                 @filtered="onFiltered"
                 :busy="loading"
-                empty-text="Нет записей для отображения"
-                empty-filtered-text="Нет записей, соответствующих вашему запросу"
         >
             <template v-slot:cell(title)="data">
                 <b-input-group size="sm">
                     <b-form-input :value="data.item.title"
                                   @blur="save($event.target.value,data.item.id,'title')"
-                                  placeholder="Введите название категории"
-                                  :disabled="data.item.title=='Другое'"
+                                  placeholder="Title"
+                                  :disabled="data.item.title=='Uncategorized'"
                     />
                 </b-input-group>
             </template>
@@ -109,23 +135,23 @@
             <template v-slot:cell(action)="data">
                 <b-input-group size="sm">
                     <b-button v-if="data.item.deleted_at==null" @click="remove(data.item.id)" class="btn btn-info mr-1 mb-1"
-                              :disabled="data.item.id===null||data.item.title=='Другое'">
-                        Удалить
+                              :disabled="data.item.id===null||data.item.title=='Uncategorized'">
+                        Delete
                     </b-button>
                     <b-button v-else @click="restore(data.item.id)" class="btn btn-info mr-1 mb-1"
-                              :disabled="data.item.id===null||data.item.title=='Другое'">
-                        Восстановить
+                              :disabled="data.item.id===null||data.item.title=='Uncategorized'">
+                        Restore
                     </b-button>
                     <b-button v-if="data.item.deleted_at!=null" @click="destroy(data.item.id)" class="btn btn-info mr-1 mb-1"
                               :disabled="data.item.id===null">
-                        Удалить полностью
+                        Destroy
                     </b-button>
                 </b-input-group>
             </template>
             <template v-slot:table-busy>
                 <div class="text-center text-primary my-2">
                     <b-spinner class="align-middle"/>
-                    <strong>Загрузка...</strong>
+                    <strong>Loading...</strong>
                 </div>
             </template>
         </b-table>
@@ -165,10 +191,9 @@
 
                 fields: [
                     {key: 'id', label: 'ID', sortable: true, sortDirection: 'desc'},
-                    {key: 'title', label: 'Название', sortable: true, sortDirection: 'desc'},
-                    {key: 'alias', label: 'Слова для поиска', sortable: true, sortDirection: 'desc'},
-                    {key: 'products_count', label: 'Товаров в категории', sortable: true, sortDirection: 'desc'},
-                    {key: 'action', label: 'Действия'}
+                    {key: 'title', label: 'Title', sortable: true, sortDirection: 'desc'},
+                    {key: 'products_count', label: 'Products count', sortable: true, sortDirection: 'desc'},
+                    {key: 'action', label: 'Actions'}
                 ],
 
                 in_process: [],
@@ -190,9 +215,9 @@
         methods: {
             sendMessage(message) {
                 this.$notify({
-                    group: 'message',
+                    group: 'info',
                     type: 'success',
-                    title: 'Категории',
+                    title: 'Categories',
                     text: message
                 });
             },
@@ -229,44 +254,7 @@
                 this.totalRows = filteredItems.length;
                 this.currentPage = 1
             },
-            addTag(tag, item){
-                item.words.push(tag);
-                this.save(item.words, item.id, 'words')
-            },
-            removeTag(tag, item){
-                var index = item.words.findIndex(x => x === tag)
-                item.words.splice(index, 1);
-                this.save(item.words, item.id, 'words')
-            },
         },
-        filters: {
-            pluralizeWords: function (n) {
-                if (n === 1) {
-                    return 'слово'
-                }
-                if (n > 1 && n < 5) {
-                    return 'слова'
-                }
-                if (n > 4 && n < 20) {
-                    return 'слов'
-                }
-                if (n > 19) {
-                    var last = n % 10;
-                    if (last === 1) {
-                        return 'слово'
-                    }
-                    if (last > 1 && last < 5) {
-                        return 'слова'
-                    }
-                    if (last > 4 && last < 10 && last === 0) {
-                        return 'слов'
-                    }
-                    return 'слов'
-                }
-                return 'слов'
-            },
-
-        }
     }
 </script>
 
