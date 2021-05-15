@@ -37,7 +37,7 @@
 
                                     <div class="header_mainmenu mainmenu_wrapper text-center">
                                         <nav class="mainmenu_wrapper primary-navigation">
-                                            <ul id="menu-main-menu" class="sf-menu nav-menu nav">
+                                            <ul id="menu-main-menu" class="sf-menu nav-menu nav d-block">
                                                 <li id="menu-item-18"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-9 current_page_item menu-item-has-children menu-item-18">
                                                     <a href="#" v-scroll-to="'#home'"><span>Home</span></a></li>
@@ -56,6 +56,10 @@
                                                 <li id="menu-item-1331"
                                                     class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1331">
                                                     <a href="#" v-scroll-to="'#contact'"><span>Contact</span></a></li>
+                                                <li id="menu-item-1331"
+                                                    class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1331">
+                                                    <a href="/shop"><span>Shop</span></a>
+                                                </li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -69,13 +73,11 @@
                         </div>
                     </header>
 
-                    <section
-                            class="page_contacts cs main_color7 section_padding_top_110 section_padding_bottom_115 columns_margin_bottom_40 visible-lg">
+                    <section class="page_contacts cs main_color7 section_padding_top_110 section_padding_bottom_115 columns_margin_bottom_40 visible-lg">
                         <div class="container">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-4">
                                     <div class="teaser text-center">
-
                                         <div class="teaser_icon size_huge highlight3">
 
                                             <img width="120" height="121" src="/img/clr-phone-call-3.png" class=""
@@ -85,19 +87,19 @@
                                         </div>
 
                                         <p><span class="small-text highlight3">call us 24/7</span><br/><span
-                                                    class="big black">0-800-234-5678</span></p>
+                                                    class="big black">0-000-000-0000</span></p>
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-4">
                                     <div class="teaser text-center">
-
                                         <div class="teaser_icon size_huge highlight8">
-
                                             <img width="120" height="85" src="/img/clr-mail-5.png" class="" alt=""/>
                                         </div>
 
-                                        <p><span class="small-text highlight8">write us</span><br/><span
-                                                    class="big black darklinks"><a href="mailto:#">cway@support.com</a></span>
+                                        <p><span class="small-text highlight8">write us</span><br/>
+                                            <span class="big black darklinks">
+                                                <a href="mailto:#">colorit@support.com</a>
+                                            </span>
                                         </p>
                                     </div>
                                 </div>
@@ -166,13 +168,13 @@
                                                 <div class="intro-layer to_animate" data-animation="fadeInUp">
                                                     <div class="slide_buttons inline-content v-spacing">
 
-                                                        <a href="index.php/file-upload" target="_self"
-                                                           class="theme_button bg_button color2 min_width_button left ">
-                                                            <i class="fa fa-upload rightpadding_10"></i>
-                                                            Upload Files
-                                                        </a>
+{{--                                                        <a href="index.php/file-upload" target="_self"--}}
+{{--                                                           class="theme_button bg_button color2 min_width_button left ">--}}
+{{--                                                            <i class="fa fa-upload rightpadding_10"></i>--}}
+{{--                                                            Upload Files--}}
+{{--                                                        </a>--}}
                                                         <a href="#" v-scroll-to="'#contact'" target="_self"
-                                                           class="theme_button bg_button color1 min_width_button left ">
+                                                           class="theme_button bg_button color2 min_width_button left ">
                                                             <i class="fa fa-pencil rightpadding_10"></i>
                                                             Request Quote
                                                         </a>
@@ -195,53 +197,53 @@
             </section>
             <!-- eof intro_section -->
             <div class="fw-page-builder-content">
-                <section class="fw-main-row  cs main_color2 half_cs section_padding_top_65 section_padding_bottom_65 columns_padding_80" id="subscribe">
-                    <div class="container">
-                        <div class="row flex-wrap v-center">
-                            <div class="col-xs-12 col-sm-6 text-sm-right text-center">
-                                <div class="text-block shortcode">
-                                    <div class="small-text greylinks"><a href="mailto:#">example@example.com</a></div>
-                                    <p class="hero black">0-800-234-5678</p>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 text-sm-left text-center">
-                                <div class="text-block shortcode">
-                                    <div>
-                                        <form id="mc4wp-form-1" class="mc4wp-form mc4wp-form-33" method="post"
-                                              data-id="33" data-name="">
-                                            <div class="mc4wp-form-fields">
-                                                <div class="form-group-wrap">
-                                                    <div class="form-group margin_0">
-                                                        <input type="email" name="EMAIL" class="form-control"
-                                                               placeholder="Newsletter Subscribe" required/>
-                                                        <button type="submit" class="theme_button bg_button color7">
-                                                            Submit
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                                <label style="display: none !important;">Leave this field empty if
-                                                    you're human:
-                                                    <input type="text" name="_mc4wp_honeypot" value=""
-                                                           tabindex="-1"
-                                                           autocomplete="off"/>
-                                                </label>
-                                                <input type="hidden" name="_mc4wp_timestamp"
-                                                        value="1609603402"/>
-                                                <input type="hidden" name="_mc4wp_form_id"
-                                                       value="33"/>
-                                                <input type="hidden"
-                                                       name="_mc4wp_form_element_id"
-                                                       value="mc4wp-form-1"/>
-                                                <div class="mc4wp-response"></div>
-                                        </form>
-                                        <!-- / MailChimp for WordPress Plugin -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+{{--                <section class="fw-main-row  cs main_color2 half_cs section_padding_top_65 section_padding_bottom_65 columns_padding_80" id="subscribe">--}}
+{{--                    <div class="container">--}}
+{{--                        <div class="row flex-wrap v-center">--}}
+{{--                            <div class="col-xs-12 col-sm-6 text-sm-right text-center">--}}
+{{--                                <div class="text-block shortcode">--}}
+{{--                                    <div class="small-text greylinks"><a href="mailto:#">example@example.com</a></div>--}}
+{{--                                    <p class="hero black">0-800-234-5678</p>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-xs-12 col-sm-6 text-sm-left text-center">--}}
+{{--                                <div class="text-block shortcode">--}}
+{{--                                    <div>--}}
+{{--                                        <form id="mc4wp-form-1" class="mc4wp-form mc4wp-form-33" method="post"--}}
+{{--                                              data-id="33" data-name="">--}}
+{{--                                            <div class="mc4wp-form-fields">--}}
+{{--                                                <div class="form-group-wrap">--}}
+{{--                                                    <div class="form-group margin_0">--}}
+{{--                                                        <input type="email" name="EMAIL" class="form-control"--}}
+{{--                                                               placeholder="Newsletter Subscribe" required/>--}}
+{{--                                                        <button type="submit" class="theme_button bg_button color7">--}}
+{{--                                                            Submit--}}
+{{--                                                        </button>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                                </div>--}}
+{{--                                                <label style="display: none !important;">Leave this field empty if--}}
+{{--                                                    you're human:--}}
+{{--                                                    <input type="text" name="_mc4wp_honeypot" value=""--}}
+{{--                                                           tabindex="-1"--}}
+{{--                                                           autocomplete="off"/>--}}
+{{--                                                </label>--}}
+{{--                                                <input type="hidden" name="_mc4wp_timestamp"--}}
+{{--                                                        value="1609603402"/>--}}
+{{--                                                <input type="hidden" name="_mc4wp_form_id"--}}
+{{--                                                       value="33"/>--}}
+{{--                                                <input type="hidden"--}}
+{{--                                                       name="_mc4wp_form_element_id"--}}
+{{--                                                       value="mc4wp-form-1"/>--}}
+{{--                                                <div class="mc4wp-response"></div>--}}
+{{--                                        </form>--}}
+{{--                                        <!-- / MailChimp for WordPress Plugin -->--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </section>--}}
                 <section class="fw-main-row  ls section_padding_top_145 section_padding_bottom_0" id="about">
 
                     <div class="container">
@@ -837,18 +839,22 @@
                                      style="padding-top: 30px;"
                                 ></div>
                                 <div class="bootstrap-accordion">
-                                    <div class="panel-group collapse-unstyled"
-                                         id="accordion-4660f6592ec3697d296a9946a3eb85bb">
+                                    <div class="panel-group collapse-unstyled" id="accordion">
                                         <div class="panel">
                                             <h4>
-                                                <a class=""
-                                                   href="#collapse-4660f6592ec3697d296a9946a3eb85bb-0"
+                                                <a
+                                                   href="#collapse-0"
                                                    data-toggle="collapse"
-                                                   data-parent="#accordion-4660f6592ec3697d296a9946a3eb85bb">
-                                                    What is printing services? </a>
+                                                   data-parent="#accordion"
+                                                   data-target="#collapse-0" aria-expanded="false" aria-controls="collapse-0"
+                                                >
+                                                    What is printing services?
+                                                </a>
                                             </h4>
-                                            <div id="collapse-4660f6592ec3697d296a9946a3eb85bb-0"
-                                                 class="panel-collapse collapse in">
+                                            <div id="collapse-0"
+                                                 class="panel-collapse collapse in show"
+                                                 data-parent="#accordion"
+                                            >
                                                 <div class="panel-content">
                                                     <p>Colorway offers a wide variety of printing and finishing
                                                         services, including electronic file access (e.g., e-mails, CDs,
@@ -857,14 +863,19 @@
                                         </div>
                                         <div class="panel">
                                             <h4>
-                                                <a class="collapsed"
-                                                   href="#collapse-4660f6592ec3697d296a9946a3eb85bb-1"
-                                                   data-toggle="collapse"
-                                                   data-parent="#accordion-4660f6592ec3697d296a9946a3eb85bb">
-                                                    What is digital printing? </a>
+                                                <a
+                                                    href="#collapse-1"
+                                                    data-toggle="collapse"
+                                                    data-parent="#accordion"
+                                                    data-target="#collapse-1" aria-expanded="false" aria-controls="collapse-1"
+                                                >
+                                                    What is digital printing?
+                                                </a>
                                             </h4>
-                                            <div id="collapse-4660f6592ec3697d296a9946a3eb85bb-1"
-                                                 class="panel-collapse collapse ">
+                                            <div id="collapse-1"
+                                                 class="panel-collapse collapse"
+                                                 data-parent="#accordion"
+                                            >
                                                 <div class="panel-content">
                                                     <p>Turducken porchetta pancetta capicola, tenderloin kevin shank
                                                         pork loin tail tongue picanha ball tip pastrami sausage. Shank
@@ -874,45 +885,62 @@
                                         <div class="panel">
                                             <h4>
                                                 <a class="collapsed"
-                                                   href="#collapse-4660f6592ec3697d296a9946a3eb85bb-2"
+                                                   href="#collapse-2"
                                                    data-toggle="collapse"
-                                                   data-parent="#accordion-4660f6592ec3697d296a9946a3eb85bb">
+                                                   data-parent="#accordion"
+                                                   data-target="#collapse-2" aria-expanded="false" aria-controls="collapse-2"
+                                                >
                                                     How can I get my print job once it is finished? </a>
                                             </h4>
-                                            <div id="collapse-4660f6592ec3697d296a9946a3eb85bb-2"
-                                                 class="panel-collapse collapse ">
+                                            <div id="collapse-2"
+                                                 class="panel-collapse collapse "
+                                                 data-parent="#accordion"
+                                            >
                                                 <div class="panel-content">
                                                     <p>Turducken porchetta pancetta capicola, tenderloin kevin shank
                                                         pork loin tail tongue picanha ball tip pastrami sausage. Shank
-                                                        shoulder tri-tip cupim ham hock pork frankfurter.</p></div>
+                                                        shoulder tri-tip cupim ham hock pork frankfurter.
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel">
                                             <h4>
                                                 <a class="collapsed"
-                                                   href="#collapse-4660f6592ec3697d296a9946a3eb85bb-3"
+                                                   href="#collapse-3"
                                                    data-toggle="collapse"
-                                                   data-parent="#accordion-4660f6592ec3697d296a9946a3eb85bb">
-                                                    Can I get a price quote for my print job? </a>
+                                                   data-parent="#accordion"
+                                                   data-target="#collapse-3" aria-expanded="false" aria-controls="collapse-3"
+                                                >
+                                                    Can I get a price quote for my print job?
+                                                </a>
                                             </h4>
-                                            <div id="collapse-4660f6592ec3697d296a9946a3eb85bb-3"
-                                                 class="panel-collapse collapse ">
+                                            <div id="collapse-3"
+                                                 class="panel-collapse collapse "
+                                                 data-parent="#accordion"
+                                            >
                                                 <div class="panel-content">
                                                     <p>Turducken porchetta pancetta capicola, tenderloin kevin shank
                                                         pork loin tail tongue picanha ball tip pastrami sausage. Shank
-                                                        shoulder tri-tip cupim ham hock pork frankfurter.</p></div>
+                                                        shoulder tri-tip cupim ham hock pork frankfurter.
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel">
                                             <h4>
                                                 <a class="collapsed"
-                                                   href="#collapse-4660f6592ec3697d296a9946a3eb85bb-4"
+                                                   href="#collapse-4"
                                                    data-toggle="collapse"
-                                                   data-parent="#accordion-4660f6592ec3697d296a9946a3eb85bb">
+                                                   data-parent="#accordion"
+                                                   data-target="#collapse-4" aria-expanded="false" aria-controls="collapse-4"
+                                                >
                                                     Can you design or help me design my print job? </a>
                                             </h4>
-                                            <div id="collapse-4660f6592ec3697d296a9946a3eb85bb-4"
-                                                 class="panel-collapse collapse ">
+                                            <div id="collapse-4"
+                                                 class="panel-collapse collapse "
+                                                 data-parent="#accordion"
+                                            >
                                                 <div class="panel-content">
                                                     <p>Turducken porchetta pancetta capicola, tenderloin kevin shank
                                                         pork loin tail tongue picanha ball tip pastrami sausage. Shank
@@ -922,13 +950,18 @@
                                         <div class="panel">
                                             <h4>
                                                 <a class="collapsed"
-                                                   href="#collapse-4660f6592ec3697d296a9946a3eb85bb-5"
+                                                   href="#collapse-5"
                                                    data-toggle="collapse"
-                                                   data-parent="#accordion-4660f6592ec3697d296a9946a3eb85bb">
-                                                    Can you scan my hardcopy originals into electronic form? </a>
+                                                   data-parent="#accordion"
+                                                   data-target="#collapse-5" aria-expanded="false" aria-controls="collapse-5"
+                                                >
+                                                    Can you scan my hardcopy originals into electronic form?
+                                                </a>
                                             </h4>
-                                            <div id="collapse-4660f6592ec3697d296a9946a3eb85bb-5"
-                                                 class="panel-collapse collapse ">
+                                            <div id="collapse-5"
+                                                 class="panel-collapse collapse "
+                                                 data-parent="#accordion"
+                                            >
                                                 <div class="panel-content">
                                                     <p>Turducken porchetta pancetta capicola, tenderloin kevin shank
                                                         pork loin tail tongue picanha ball tip pastrami sausage. Shank

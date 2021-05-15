@@ -23,7 +23,6 @@ class User extends Authenticatable
         'telegram_chat_id',
         'fio_from_telegram',
         'phone',
-//        'birthday',
         'is_admin'
     ];
 
@@ -41,13 +40,4 @@ class User extends Authenticatable
         'deleted_at'
     ];
 
-
-    protected $appends = [
-        'vinrequests'
-    ];
-
-    public function getVinrequestsAttribute()
-    {
-        return Vinrequest::where('user_id', $this->id)->get();
-    }
 }

@@ -10,12 +10,11 @@ class Category extends Model
     //
     use SoftDeletes;
     protected $fillable = [
-        'title', 'words', 'img'
+        'title'
     ];
 
     protected $casts = [
         'id' => 'integer',
-        'words' => 'array',
     ];
 
     protected $appends = [

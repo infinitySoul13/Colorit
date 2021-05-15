@@ -5,8 +5,8 @@ namespace App\Conversations;
 use App\User;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -26,6 +26,7 @@ class ServiceOrderConversation extends Conversation
     protected $printing;
     protected $period;
     protected $sum;
+    protected $images;
 
     protected $quantity;
     protected $phone;
@@ -34,82 +35,84 @@ class ServiceOrderConversation extends Conversation
     public function __construct($bot)
     {
         $telegramUser = $bot->getUser()->getId();
+
+        Log::info("telegram chat id=$telegramUser");
         $this->bot = $bot;
-//        $this->user = User::where("telegram_chat_id", $telegramUser)->first();
-        $this->chat_id = $telegramUser;
+
+        $this->chat_id =  $this->bot->getUser()->getId();
     }
     /**
      * Greetings to start the conversation.
      *
-     * @return void
      */
     public function greetings()
     {
         $text = 'Добро пожаловать в оформление заказа, выберите услугу, который вас интересует! Перед оформлением заказа советуем ознакомиться с прайс-листом';
         $question = Question::create($text)
             ->fallback('Спасибо, что пообщались со мной:)!')
-//            ->addButtons(
-//                [
-//                    Button::create('Визитки')->value('Визитки'),
-//                    Button::create('')->value(''),
-//                    Button::create('')->value('')
-//                ]
-//            )->addButtons(
-//                [
-//                    Button::create('Визитки')->value('Визитки'),
-//                    Button::create('')->value(''),
-//                    Button::create('')->value('')
-//                ]
-//            )
-        ;
-        return $this->ask($question, function (Answer $answer) {
-            $inline_keyboard=[
+            ->callbackId('greetings')
+            ->addButtons(
                 [
-                    ["text" => "Визитки", "callback_data" => "Визитки"],
-                    ["text" => "Листовки", "callback_data" => "/service  "],
-                    ["text" => "Бланки", "callback_data" => "/service  "],
-                ],
-                [
-                    ["text" => "Буклеты", "callback_data" => "/service  "],
-                    ["text" => "Наклейки на бумаге", "callback_data" => "/service  "],
-                ],
-                [
-                    ["text" => "Пластиковые карты", "callback_data" => "/service  "],
-                    ["text" => "Чертежи", "callback_data" => "/service  "],
-                ],
-                [
-                    ["text" => "Штендеры", "callback_data" => "/service  "],
-                    ["text" => "Баннеры", "callback_data" => "/service  "],
-                ],
-                [
-                    ["text" => "Таблички на акриле", "callback_data" => "/service  "],
-                    ["text" => "Наклейки на плёнке", "callback_data" => "/service  "],
-
-                ],
-                [
-                    ["text" => "Таблички на ПВХ", "callback_data" => "/service  "],
-                    ["text" => "Трафареты", "callback_data" => "/service  "],
-
-                ],
-
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+                    Button::create('Визитки')->value('Визитки'),
+                    Button::create('Листовки')->value('Листовки'),
+                    Button::create('Бланки')->value('Бланки'),
+                    Button::create('Буклеты')->value('Буклеты'),
+                    Button::create('Наклейки на бумаге')->value('Наклейки на бумаге'),
+                    Button::create('Пластиковые карты')->value('Пластиковые карты'),
+                    Button::create('Чертежи')->value('Чертежи'),
+                    Button::create('Штендеры')->value('Штендеры'),
+                    Button::create('Баннеры')->value('Баннеры'),
+                    Button::create('Таблички на акриле')->value('Таблички на акриле'),
+                    Button::create('Наклейки на плёнке')->value('Наклейки на плёнке'),
+                    Button::create('Таблички на ПВХ')->value('Таблички на ПВХ'),
+                    Button::create('Трафареты')->value('Трафареты'),
+                ]
+            );
+        $this->ask($question, function (Answer $answer) {
             $this->service = $answer->getText();
-            Log::info("answer=$answer");
-            Log::info("service=$this->service");
-//            if ($answer->isInteractiveMessageReply()) {
-//                $this->service = $answer->getText();
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Визитки", "callback_data" => "Визитки"],
+//                    ["text" => "Листовки", "callback_data" => "/service  "],
+//                    ["text" => "Бланки", "callback_data" => "/service  "]
+//                ],
+//                [
+//                    ["text" => "Буклеты", "callback_data" => "/service  "],
+//                    ["text" => "Наклейки на бумаге", "callback_data" => "/service  "]
+//                ],
+//                [
+//                    ["text" => "Пластиковые карты", "callback_data" => "/service  "],
+//                    ["text" => "Чертежи", "callback_data" => "/service  "]
+//                ],
+//                [
+//                    ["text" => "Штендеры", "callback_data" => "/service  "],
+//                    ["text" => "Баннеры", "callback_data" => "/service  "]
+//                ],
+//                [
+//                    ["text" => "Таблички на акриле", "callback_data" => "/service  "],
+//                    ["text" => "Наклейки на плёнке", "callback_data" => "/service  "]
+//                ],
+//                [
+//                    ["text" => "Таблички на ПВХ", "callback_data" => "/service  "],
+//                    ["text" => "Трафареты", "callback_data" => "/service  "]
+//                ]
+//            ];
+//            $telegramUser = $this->bot->getUser();
+//            $id = $telegramUser->getId();
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => "$id",
+//                    "text" => "1",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' => $inline_keyboard
+//                    ])
+//                ]);
+            $this->service = $answer->getText();
+            if ($answer->isInteractiveMessageReply()) {
+                $this->service = $answer->getText();
                 $this->askSize();
-//            }
+            }
 
         });
 
@@ -117,324 +120,446 @@ class ServiceOrderConversation extends Conversation
     }
     public function askSize()
     {
-        $this->ask('Выберите желаемый размер:'.$this->service, function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите желаемый размер:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "90х50", "callback_data" => ""],
-                    ["text" => "85х55", "callback_data" => ""],
-                    ["text" => "100х70", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "100х90", "callback_data" => ""],
-                    ["text" => "105х74", "callback_data" => ""],
-                    ["text" => "148х70", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "148х105", "callback_data" => ""],
-                    ["text" => "180х105", "callback_data" => ""],
-                    ["text" => "200х70", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "204х101", "callback_data" => ""],
-                    ["text" => "210х90", "callback_data" => ""],
-                    ["text" => "210х99", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "210х148", "callback_data" => ""],
-                    ["text" => "210х200", "callback_data" => ""],
-                    ["text" => "297х210", "callback_data" => ""],
-
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
-//            $this->size = $answer->getText();
-//            if ($answer->isInteractiveMessageReply()) {
-//                $this->size = $answer->getText();
-//                $this->askMaterial();
-//            }
+                    Button::create('90х50')->value('Визитки'),
+                    Button::create('85х55')->value('Листовки'),
+                    Button::create('100х70')->value('Бланки'),
+                    Button::create('100х90')->value('Буклеты'),
+                    Button::create('105х74')->value('Наклейки на бумаге'),
+                    Button::create('148х70')->value('Пластиковые карты'),
+                    Button::create('148х105')->value('Чертежи'),
+                    Button::create('180х105')->value('Штендеры'),
+                    Button::create('200х70')->value('Баннеры'),
+                    Button::create('204х101')->value('Таблички на акриле'),
+                    Button::create('210х90')->value('Наклейки на плёнке'),
+                    Button::create('210х99')->value('Таблички на ПВХ'),
+                    Button::create('210х148')->value('Трафареты'),
+                    Button::create('210х200')->value('Трафареты'),
+                    Button::create('297х210')->value('Трафареты'),
+                ]
+            );
+        $this->ask( $question , function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "90х50", "callback_data" => ""],
+//                    ["text" => "85х55", "callback_data" => ""],
+//                    ["text" => "100х70", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "100х90", "callback_data" => ""],
+//                    ["text" => "105х74", "callback_data" => ""],
+//                    ["text" => "148х70", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "148х105", "callback_data" => ""],
+//                    ["text" => "180х105", "callback_data" => ""],
+//                    ["text" => "200х70", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "204х101", "callback_data" => ""],
+//                    ["text" => "210х90", "callback_data" => ""],
+//                    ["text" => "210х99", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "210х148", "callback_data" => ""],
+//                    ["text" => "210х200", "callback_data" => ""],
+//                    ["text" => "297х210", "callback_data" => ""],
+//
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
+            $this->size = $answer->getText();
+            if ($answer->isInteractiveMessageReply()) {
+                $this->size = $answer->getText();
+                $this->askMaterial();
+            }
         });
 //        $this->askMaterial();
     }
    public function askMaterial()
     {
-        $this->ask('Выберите материал:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите материал:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "Raflatak с просечками", "callback_data" => ""],
-                    ["text" => "Крафт 70", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Офсет 80", "callback_data" => ""],
-                    ["text" => "Мел МАТ 115", "callback_data" => ""],
-                    ["text" => "Мел ГЛ 90", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Мел ГЛ 115", "callback_data" => ""],
-                    ["text" => "Мел ГЛ 130", "callback_data" => ""],
-                    ["text" => "Мел ГЛ 150", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Мел ГЛ 170", "callback_data" => ""],
-                    ["text" => "Мел ГЛ 200", "callback_data" => ""],
-                    ["text" => "Мел ГЛ 250", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Мел ГЛ 300", "callback_data" => ""],
-                    ["text" => "Мел ГЛ 350", "callback_data" => ""],
-
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
-            $this->material = $answer->getText();
+                    Button::create('Raflatak с просечками')->value('Визитки'),
+                    Button::create('Крафт 70')->value('Листовки'),
+                    Button::create('Офсет 80')->value('Бланки'),
+                    Button::create('Мел МАТ 115')->value('Буклеты'),
+                    Button::create('Мел ГЛ 90')->value('Наклейки на бумаге'),
+                    Button::create('Мел ГЛ 115')->value('Пластиковые карты'),
+                    Button::create('Мел ГЛ 130')->value('Чертежи'),
+                    Button::create('Мел ГЛ 150')->value('Штендеры'),
+                    Button::create('Мел ГЛ 170')->value('Баннеры'),
+                    Button::create('Мел ГЛ 200')->value('Таблички на акриле'),
+                    Button::create('Мел ГЛ 250')->value('Наклейки на плёнке'),
+                    Button::create('Мел ГЛ 300')->value('Таблички на ПВХ'),
+                    Button::create('Мел ГЛ 350')->value('Трафареты')
+                ]
+            );
+        $this->ask($question , function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Raflatak с просечками", "callback_data" => ""],
+//                    ["text" => "Крафт 70", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Офсет 80", "callback_data" => ""],
+//                    ["text" => "Мел МАТ 115", "callback_data" => ""],
+//                    ["text" => "Мел ГЛ 90", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Мел ГЛ 115", "callback_data" => ""],
+//                    ["text" => "Мел ГЛ 130", "callback_data" => ""],
+//                    ["text" => "Мел ГЛ 150", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Мел ГЛ 170", "callback_data" => ""],
+//                    ["text" => "Мел ГЛ 200", "callback_data" => ""],
+//                    ["text" => "Мел ГЛ 250", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Мел ГЛ 300", "callback_data" => ""],
+//                    ["text" => "Мел ГЛ 350", "callback_data" => ""],
+//
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
+//            $this->material = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->material = $answer->getText();
                 $this->askCoverOfset();
             }
         });
-        $this->askCoverOfset();
+//        $this->askCoverOfset();
     }
 
     public function askCoverOfset()
     {
-        $this->ask('Выберите покрытие ОФСЕТ:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите покрытие ОФСЕТ')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "Нет", "callback_data" => ""],
-                    ["text" => "ГЛ лам 1+0", "callback_data" => ""],
-                    ["text" => "ГЛ лам 1+1", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "МАТ лам 1+0", "callback_data" => ""],
-                    ["text" => "МАТ лам 1+1", "callback_data" => ""],
-                    ["text" => "УФ лак 1+0", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Гибрид 1+0", "callback_data" => ""],
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+                    Button::create('Нет')->value('Визитки'),
+                    Button::create('ГЛ лам 1+0')->value('Листовки'),
+                    Button::create('ГЛ лам 1+1')->value('Буклеты'),
+                    Button::create('МАТ лам 1+0')->value('Наклейки на бумаге'),
+                    Button::create('МАТ лам 1+1')->value('Пластиковые карты'),
+                    Button::create('УФ лак 1+0')->value('Чертежи'),
+                    Button::create('Гибрид 1+0')->value('Баннеры'),
+                ]
+            );
+        $this->ask($question, function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Нет", "callback_data" => ""],
+//                    ["text" => "ГЛ лам 1+0", "callback_data" => ""],
+//                    ["text" => "ГЛ лам 1+1", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "МАТ лам 1+0", "callback_data" => ""],
+//                    ["text" => "МАТ лам 1+1", "callback_data" => ""],
+//                    ["text" => "УФ лак 1+0", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Гибрид 1+0", "callback_data" => ""],
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
             $this->cover_ofset = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->cover_ofset = $answer->getText();
                 $this->askCover();
             }
         });
-        $this->askCover();
+//        $this->askCover();
     }
     public function askCover()
     {
-        $this->ask('Выберите покрытие:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите покрытие:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "Нет", "callback_data" => ""],
-                    ["text" => "Ламинация рулонная", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Ламинация конвертная", "callback_data" => ""],
-                    ["text" => "Глянцевая УФ лак", "callback_data" => ""],
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+                    Button::create('Нет')->value('Визитки'),
+                    Button::create('Ламинация рулонная')->value('Листовки'),
+                    Button::create('Ламинация конвертная')->value('Бланки'),
+                    Button::create('Глянцевая УФ лак')->value('Наклейки на бумаге'),
+                ]
+            );
+        $this->ask($question, function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Нет", "callback_data" => ""],
+//                    ["text" => "Ламинация рулонная", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Ламинация конвертная", "callback_data" => ""],
+//                    ["text" => "Глянцевая УФ лак", "callback_data" => ""],
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
             $this->cover = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->cover = $answer->getText();
                 $this->askProcessing();
             }
         });
-        $this->askProcessing();
+//        $this->askProcessing();
     }
     public function askProcessing()
     {
-        $this->ask('Выберите постпечатную обработку:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите постпечатную обработку:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "Персонализация", "callback_data" => ""],
-                    ["text" => "Закругление углов", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Проклейка в блок", "callback_data" => ""],
-                    ["text" => "Сверление", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Сгиб", "callback_data" => ""],
-                    ["text" => "Биговка", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Перфорация", "callback_data" => ""],
-                    ["text" => "Плоттерная прорезка", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Фигурная прорезка", "callback_data" => ""],
-                    ["text" => "Конвертная ламинация", "callback_data" => ""],
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+                    Button::create('Персонализация')->value('Визитки'),
+                    Button::create('Закругление углов')->value('Листовки'),
+                    Button::create('Проклейка в блок')->value('Бланки'),
+                    Button::create('Сверление')->value('Буклеты'),
+                    Button::create('Сгиб')->value('Наклейки на бумаге'),
+                    Button::create('Биговка')->value('Наклейки на бумаге'),
+                    Button::create('Перфорация')->value('Наклейки на бумаге'),
+                    Button::create('Плоттерная прорезка')->value('Наклейки на бумаге'),
+                    Button::create('Фигурная прорезка')->value('Наклейки на бумаге'),
+                    Button::create('Конвертная ламинация')->value('Наклейки на бумаге'),
+                ]
+            );
+        $this->ask($question, function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Персонализация", "callback_data" => ""],
+//                    ["text" => "Закругление углов", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Проклейка в блок", "callback_data" => ""],
+//                    ["text" => "Сверление", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Сгиб", "callback_data" => ""],
+//                    ["text" => "Биговка", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Перфорация", "callback_data" => ""],
+//                    ["text" => "Плоттерная прорезка", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Фигурная прорезка", "callback_data" => ""],
+//                    ["text" => "Конвертная ламинация", "callback_data" => ""],
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
             $this->processing = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->processing = $answer->getText();
                 $this->askPrinting();
             }
         });
-        $this->askPrinting();
+//        $this->askPrinting();
     }
     public function askPrinting()
     {
-        $this->ask('Выберите вариант печати:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите вариант печати:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "Полноцветная 4+0", "callback_data" => ""],
-                    ["text" => "Полноцветная 4+4", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Черно-белая 1+0", "callback_data" => ""],
-                    ["text" => "Черно-белая 1+1", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Белым 1+0", "callback_data" => ""],
-                    ["text" => "Белым 2+0", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Белым 1+1", "callback_data" => ""],
-                    ["text" => "Белым 2+1", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Цифровой лак 1+0", "callback_data" => ""],
-                    ["text" => "Цифровой лак 1+1", "callback_data" => ""],
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+                    Button::create('Полноцветная 4+0')->value('Визитки'),
+                    Button::create('Полноцветная 4+4')->value('Листовки'),
+                    Button::create('Черно-белая 1+0')->value('Бланки'),
+                    Button::create('Черно-белая 1+1')->value('Буклеты'),
+                    Button::create('Белым 1+0')->value('Наклейки на бумаге'),
+                    Button::create('Белым 2+0')->value('Наклейки на бумаге'),
+                    Button::create('Белым 1+1')->value('Наклейки на бумаге'),
+                    Button::create('Белым 2+1')->value('Наклейки на бумаге'),
+                    Button::create('Цифровой лак 1+0')->value('Наклейки на бумаге'),
+                    Button::create('Цифровой лак 1+1')->value('Наклейки на бумаге'),
+                ]
+            );
+        $this->ask($question, function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Полноцветная 4+0", "callback_data" => ""],
+//                    ["text" => "Полноцветная 4+4", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Черно-белая 1+0", "callback_data" => ""],
+//                    ["text" => "Черно-белая 1+1", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Белым 1+0", "callback_data" => ""],
+//                    ["text" => "Белым 2+0", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Белым 1+1", "callback_data" => ""],
+//                    ["text" => "Белым 2+1", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Цифровой лак 1+0", "callback_data" => ""],
+//                    ["text" => "Цифровой лак 1+1", "callback_data" => ""],
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
             $this->printing = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->printing = $answer->getText();
                 $this->askQuantity();
             }
         });
-        $this->askQuantity();
+//        $this->askQuantity();
     }
     public function askQuantity(){
-        $this->ask('Выберите необходимое количество экземпляров:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите необходимое количество экземпляров:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "1", "callback_data" => ""],
-                    ["text" => "5", "callback_data" => ""],
-                    ["text" => "25", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "50", "callback_data" => ""],
-                    ["text" => "100", "callback_data" => ""],
-                    ["text" => "200", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "500", "callback_data" => ""],
-                ],
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+                    Button::create('1')->value('Визитки'),
+                    Button::create('5')->value('Листовки'),
+                    Button::create('25')->value('Бланки'),
+                    Button::create('50')->value('Буклеты'),
+                    Button::create('100')->value('Наклейки на бумаге'),
+                    Button::create('200')->value('Наклейки на бумаге'),
+                    Button::create('500')->value('Наклейки на бумаге'),
+                ]
+            );
+        $this->ask( $question , function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "1", "callback_data" => ""],
+//                    ["text" => "5", "callback_data" => ""],
+//                    ["text" => "25", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "50", "callback_data" => ""],
+//                    ["text" => "100", "callback_data" => ""],
+//                    ["text" => "200", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "500", "callback_data" => ""],
+//                ],
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
             $this->quantity = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->quantity = $answer->getText();
-                $this->askCover();
+                $this->askPeriod();
             }
         });
-        $this->askPeriod();
+//        $this->askPeriod();
     }
     public function askPeriod(){
-        $this->ask('Выберите срок печати:', function (Answer $answer) {
-            $inline_keyboard=[
+        $question = Question::create('Выберите срок печати:')
+            ->fallback('Спасибо, что пообщались со мной:)!')
+            ->addButtons(
                 [
-                    ["text" => "Экспресс 3 часа", "callback_data" => ""],
-                    ["text" => "Стандарт 1 день", "callback_data" => ""],
-                ],
-                [
-                    ["text" => "Эконом 2 дня", "callback_data" => ""],
-                    ["text" => "Супер эконом 3 дня", "callback_data" => ""],
-                    ["text" => "200", "callback_data" => ""],
+                    Button::create('Экспресс 3 часа')->value('Визитки'),
+                    Button::create('Стандарт 1 день')->value('Листовки'),
+                    Button::create('Эконом 2 дня')->value('Бланки'),
+                    Button::create('Супер эконом 3 дня')->value('Буклеты'),
                 ]
-            ];
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => $this->chat_id,
-                    "text" => "",
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $inline_keyboard
-                    ])
-                ]);
+            );
+        $this->ask( $question, function (Answer $answer) {
+//            $inline_keyboard=[
+//                [
+//                    ["text" => "Экспресс 3 часа", "callback_data" => ""],
+//                    ["text" => "Стандарт 1 день", "callback_data" => ""],
+//                ],
+//                [
+//                    ["text" => "Эконом 2 дня", "callback_data" => ""],
+//                    ["text" => "Супер эконом 3 дня", "callback_data" => ""],
+//                    ["text" => "200", "callback_data" => ""],
+//                ]
+//            ];
+//            $this->bot->sendRequest("sendMessage",
+//                [
+//                    "chat_id" => $this->chat_id,
+//                    "text" => "",
+//                    "parse_mode" => "Markdown",
+//                    'reply_markup' => json_encode([
+//                        'inline_keyboard' =>
+//                            $inline_keyboard
+//                    ])
+//                ]);
             $this->period = $answer->getText();
             if ($answer->isInteractiveMessageReply()) {
                 $this->period = $answer->getText();
                 $this->askImage();
             }
         });
-        $this->askImage();
+//        $this->askImage();
     }
     public function askImage()
     {
-        $this->askForImages('Выберите дизайн', function ($images) {
-            //todo: сохранить картинки на серваке и получить ссылки
+        $this->askForImages('Please upload an image.', function ($images) {
+            //
+            $this->images = $images;
+        }, function(Answer $answer) {
+            $this->images = $answer;
+            // This method is called when no valid image was provided.
             $this->askPhone();
         });
     }
@@ -552,25 +677,30 @@ class ServiceOrderConversation extends Conversation
             . "*Печать*:" . $this->printing . "\n"
             . "*Количество экземпляров*:" . $this->quantity . "\n"
             . "*Срок печати*:" . $this->period . "\n"
-//            . "*Сумма к оплате*:" . $this->sum . "\n"
-            . "*Дата заказа*:" . (Carbon::now('+3:00')) . "\n*Заказ*:\n";
+            . "*Сумма к оплате*:1015 руб\n"
+            . "*Дата заказа*:" . (Carbon::now('+3:00'));
 
-
-        try {
-            Telegram::sendMessage([
-                'chat_id' => env("CHANNEL_ID"),
-                'parse_mode' => 'Markdown',
-                'text' => $order_tmp,
-                'disable_notification' => 'false'
-            ]);
-        } catch (\Exception $e) {
-            Log::info("Ошибка отправки заказа в канал!");
-        }
+        $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => $this->chat_id,
+            "text" =>  $order_tmp,
+            "parse_mode" => "Markdown",
+        ]);
+//        try {
+////            Telegram::sendMessage([
+////                'chat_id' => env("CHANNEL_ID"),
+////                'parse_mode' => 'Markdown',
+////                'text' => $order_tmp,
+////                'disable_notification' => 'false'
+////            ]);
+//        } catch (\Exception $e) {
+//            Log::info("Ошибка отправки заказа в канал!");
+//        }
 
         $this->bot->userStorage()->save([
             'orders' => json_encode([])
         ]);
-        $this->mainMenu("Ваш заказ успешно отправлен");
+        $this->serviceOrderMenu("Ваш заказ успешно сформирован");
     }
     private function mainMenu($message)
     {

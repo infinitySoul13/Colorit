@@ -17,7 +17,7 @@ class Product extends Model
         'description',
         'category',
         'src',
-        'rating',
+//        'rating',
         'size',
         'color'
     ];
@@ -41,6 +41,10 @@ class Product extends Model
         }
 
         return $products;
+    }
+    public function reviews()
+    {
+        return $this->belongsToMany(\App\Review::class, 'products_reviews', 'product_id', 'review_id');
     }
 
 }

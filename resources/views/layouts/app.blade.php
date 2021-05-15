@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'АВТОДОН') }}</title>
+    <title>{{ config('app.name', 'COLORIT') }}</title>
     <link rel="shortcut icon" href="{{asset('assets/images/red2.png')}}" type="image/png">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -22,10 +22,11 @@
 </head>
 <body>
 <div id="app">
+    <notifications group="info" :position="'top left'" :max="5"></notifications>
     <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'АВТОДОН') }}
+                <img src="/img/2colorit.png"  class="mr-auto" alt="Image" style="height: 20px;">
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -41,12 +42,12 @@
 
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.index') }}">Товары</a>
+                            <a class="nav-link" href="{{ route('admin.index') }}">Products</a>
 
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.categories') }}">Категории</a>
+                            <a class="nav-link" href="{{ route('admin.categories') }}">Categories</a>
 
                         </li>
 
@@ -63,7 +64,7 @@
                     <!-- Authentication Links -->
                     @guest
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Войти</a>
+                            <a class="nav-link" href="{{ route('login') }}">Log In</a>
                         </li>
 {{--                        @if (Route::has('register'))--}}
 {{--                            <li class="nav-item">--}}
@@ -81,7 +82,7 @@
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                    Выйти
+                                    Logout
                                 </a>
 
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST"

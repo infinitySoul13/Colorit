@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal :id="modal" title="Изменить категорию" v-if="admin_categories.length>0">
+        <b-modal :id="modal" title="Change category" v-if="admin_categories.length>0">
             <b-form-select
                     v-model="category"
                     value-field="title"
@@ -15,14 +15,14 @@
                             class="float-right"
                             @click="saveAll(category, 'category')"
                     >
-                        Сохранить
+                        Save
                     </b-button>
                     <b-button
                             variant="primary"
                             class="float-right mr-2"
                             @click="cancel"
                     >
-                        Отмена
+                        Cancel
                     </b-button>
                 </div>
             </template>
@@ -30,7 +30,7 @@
         <b-row>
             <b-col lg="6" class="my-1">
                 <b-form-group
-                        label="Сортировка"
+                        label="Sorting"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
@@ -50,10 +50,9 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
-
             <b-col lg="6" class="my-1">
                 <b-form-group
-                        label="Поиск"
+                        label="Search"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
@@ -65,18 +64,17 @@
                                 v-model="filter"
                                 type="search"
                                 id="filterInput"
-                                placeholder="Введите для поиска"
+                                placeholder="Print to search"
                         />
                         <b-input-group-append>
-                            <b-button :disabled="!filter" @click="filter = ''">Очистить</b-button>
+                            <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-form-group>
             </b-col>
-
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
-                        label="На странице"
+                        label="On page"
                         label-cols-sm="6"
                         label-cols-md="4"
                         label-cols-lg="3"
@@ -93,7 +91,6 @@
                     />
                 </b-form-group>
             </b-col>
-
             <b-col sm="7" md="6" class="my-1">
                 <b-pagination
                         v-model="currentPage"
@@ -106,33 +103,33 @@
             </b-col>
             <b-col md="12" class="my-1" v-if="selected.length>1">
                 <b-row class="m-auto p-3" style="border-top: 1px solid #d8dbe0;">
-                    <b-col md="4">
-                        <b-button @click="selectAllRows" variant="primary" class="mr-1 mb-1">
-                            Выбрать все
+                    <b-col md="3">
+                        <b-button @click="selectAllRows" variant="primary" class="w-100 mr-1 mb-1">
+                            Select All
                         </b-button>
                     </b-col>
-                    <b-col md="4">
-                        <b-button @click="clearSelected" variant="primary" class="mr-1 mb-1">
-                            Отменить выделение
+                    <b-col md="3">
+                        <b-button @click="clearSelected" variant="primary" class="w-100 mr-1 mb-1">
+                            Clear Selected
                         </b-button>
                     </b-col>
-                    <b-col md="4">
-                        <b-button v-if="products[0].deleted_at==null" @click="removeAll" variant="primary" class="mr-1 mb-1">
-                            Удалить выделенные
+                    <b-col md="3">
+                        <b-button v-if="products[0].deleted_at==null" @click="removeAll" variant="primary" class="w-100 mr-1 mb-1">
+                            Remove Selected
                         </b-button>
-                        <b-button v-else @click="restoreAll" variant="primary" class="mr-1 mb-1">
-                            Восстановить выделенные
+                        <b-button v-else @click="restoreAll" variant="primary" class="w-100 mr-1 mb-1">
+                            Restore Selected
                         </b-button>
                     </b-col>
-                    <b-col md="4">
-                        <b-button @click="setInitialCategory" variant="primary" class="mt-1 mb-1">Изменить категорию у выделенных</b-button>
+                    <b-col md="3">
+                        <b-button @click="setInitialCategory" variant="primary" class="w-100 mt-1 mb-1">Set Category</b-button>
                     </b-col>
-                    <b-col md="4">
-                        <b-button @click="saveAll(true, 'is_active')" variant="primary" class="mt-1 mb-1">Показать выделенные на сайте</b-button>
-                    </b-col>
-                    <b-col md="4">
-                        <b-button @click="saveAll(false, 'is_active')" variant="primary" class="mt-1 mb-1">Скрыть выделенные на сайте</b-button>
-                    </b-col>
+<!--                    <b-col md="4">-->
+<!--                        <b-button @click="saveAll(true, 'is_active')" variant="primary" class="mt-1 mb-1">Показать выделенные на сайте</b-button>-->
+<!--                    </b-col>-->
+<!--                    <b-col md="4">-->
+<!--                        <b-button @click="saveAll(false, 'is_active')" variant="primary" class="mt-1 mb-1">Скрыть выделенные на сайте</b-button>-->
+<!--                    </b-col>-->
                 </b-row>
             </b-col>
         </b-row>
@@ -140,7 +137,7 @@
                 show-empty
                 small
                 stacked="md"
-                :items="products"
+                :items="productss"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -151,14 +148,14 @@
                 :sort-direction="sortDirection"
                 @filtered="onFiltered"
                 :busy="loading"
-                empty-text="Нет записей для отображения"
-                empty-filtered-text="Нет записей, соответствующих вашему запросу"
                 selectable
                 :select-mode="'multi'"
                 @row-selected="onRowSelected"
                 ref="selectableTable"
                 class="stacked"
         >
+<!--                  empty-text="Нет записей для отображения"
+                empty-filtered-text="Нет записей, соответствующих вашему запросу"-->
             <template #cell(selected)="{ rowSelected }">
                 <template v-if="rowSelected">
                     <span aria-hidden="true">&check;</span>
@@ -169,142 +166,168 @@
                     <span class="sr-only">Not selected</span>
                 </template>
             </template>
-            <template v-slot:cell(title)="data">
-                <b-input-group size="sm">
-                    <b-form-input :value="data.item.title"
-                                  @blur="save($event.target.value,data.item.id,'title')"
-                                  placeholder="Введите название товара"
-                                  class="w-100 min"
-                    />
-                </b-input-group>
-            </template>
-            <template v-slot:cell(category)="data">
-                <b-input-group size="sm">
-                    <b-form-select
-                            v-model="data.item.category"
-                            value-field="title"
-                            text-field="title"
-                            :options="admin_categories"
-                            @change="save(data.item.category,data.item.id,'category')"
-                    >
-                    </b-form-select>
-                </b-input-group>
-            </template>
-            <template v-slot:cell(brand)="data">
-                <b-input-group size="sm">
-                    <b-form-input
-                            v-model="data.item.brand"
-                            type="text"
-                            @blur="save($event.target.value, data.item.id,'brand')"
-                    >
-                    </b-form-input>
-                </b-input-group>
-            </template>
-            <template v-slot:cell(quantity)="data">
-                <b-input-group size="sm">
-                    <b-form-input :value="data.item.quantity"
-                                  type="number"
-                                  @blur="save($event.target.value,data.item.id,'quantity')"
-                                  placeholder="Введите кол-во"/>
-                </b-input-group>
-            </template>
-            <template v-slot:cell(price)="data">
-                <b-input-group size="sm">
-                    <b-form-input :value="data.item.price"
-                                  type="number"
-                                  @blur="save($event.target.value,data.item.id,'price')"
-                                  placeholder="Введите цену"/>
-                </b-input-group>
-            </template>
-            <template v-slot:cell(from_vk)="data">
-                <span class="w-100 text-center m-auto" v-if="data.item.from_vk">Да</span>
-                <span class="w-100 text-center m-auto" v-else>Нет</span>
-            </template>
+<!--            <template v-slot:cell(title)="data">-->
+<!--                <b-input-group size="sm">-->
+<!--                    <b-form-input :value="data.item.title"-->
+<!--                                  @blur="save($event.target.value,data.item.id,'title')"-->
+<!--                                  placeholder="Product title"-->
+<!--                                  class="w-100 min"-->
+<!--                    />-->
+<!--                </b-input-group>-->
+<!--            </template>-->
+<!--            <template v-slot:cell(category)="data">-->
+<!--                <b-input-group size="sm">-->
+<!--                    <b-form-select-->
+<!--                            v-model="data.item.category"-->
+<!--                            value-field="title"-->
+<!--                            text-field="title"-->
+<!--                            :options="admin_categories"-->
+<!--                            @change="save(data.item.category,data.item.id,'category')"-->
+<!--                    >-->
+<!--                    </b-form-select>-->
+<!--                </b-input-group>-->
+<!--            </template>-->
+<!--            <template v-slot:cell(price)="data">-->
+<!--                <b-input-group size="sm">-->
+<!--                    <b-form-input :value="data.item.price"-->
+<!--                                  type="number"-->
+<!--                                  @blur="save($event.target.value,data.item.id,'price')"-->
+<!--                                  placeholder="Price"/>-->
+<!--                </b-input-group>-->
+<!--            </template>-->
+<!--            <template v-slot:cell(discount)="data">-->
+<!--                <b-input-group size="sm">-->
+<!--                    <b-form-input-->
+<!--                            v-model="data.item.discount"-->
+<!--                            type="text"-->
+<!--                            @blur="save($event.target.value, data.item.id,'discount')"-->
+<!--                            placeholder="Discount"-->
+<!--                    >-->
+<!--                    </b-form-input>-->
+<!--                </b-input-group>-->
+<!--            </template>-->
+<!--            <template v-slot:cell(discount_price)="data">-->
+<!--                <b-input-group size="sm">-->
+<!--                    <b-form-input-->
+<!--                            v-model="data.item.discount_price"-->
+<!--                            type="text"-->
+<!--                            @blur="save($event.target.value, data.item.id,'discount_price')"-->
+<!--                            placeholder="Discount price"-->
+<!--                    >-->
+<!--                    </b-form-input>-->
+<!--                </b-input-group>-->
+<!--            </template>-->
+<!--            <template v-slot:cell(quantity)="data">-->
+<!--                <b-input-group size="sm">-->
+<!--                    <b-form-input :value="data.item.quantity"-->
+<!--                                  type="number"-->
+<!--                                  @blur="save($event.target.value,data.item.id,'quantity')"-->
+<!--                                  placeholder="Quantity"/>-->
+<!--                </b-input-group>-->
+<!--            </template>-->
             <template v-slot:cell(action)="data">
                 <b-input-group size="sm" class="w-100">
-                    <b-button @click="data.toggleDetails" class="w-100 btn btn-travel mr-1 mb-1 btn-travel">
-                        {{ data.detailsShowing ? 'Свернуть' : 'Развернуть' }}
-                    </b-button>
+<!--                    <b-button @click="data.toggleDetails" class="w-100 btn btn-travel mr-1 mb-1 btn-travel">-->
+<!--                        {{ data.detailsShowing ? 'Collapse' : 'Expand' }}-->
+<!--                    </b-button>-->
 
-                    <b-button v-if="data.item.is_active" @click="changeIsActive(false, data.item,'is_active')" class="btn btn-info w-100 mr-1 mb-1"
-                              :disabled="data.item.id===null">
-                        Скрыть
+<!--                    <b-button v-if="data.item.is_active" @click="changeIsActive(false, data.item,'is_active')" class="btn btn-info w-100 mr-1 mb-1"-->
+<!--                              :disabled="data.item.id===null">-->
+<!--                        Скрыть-->
+<!--                    </b-button>-->
+<!--                    <b-button v-else @click="changeIsActive(true, data.item,'is_active')" class="btn btn-info w-100 mr-1 mb-1"-->
+<!--                              :disabled="data.item.id===null">-->
+<!--                        Показать-->
+<!--                    </b-button>-->
+                    <b-button
+                            v-if="data.item.deleted_at==null"
+                            @click="remove(data.item.id)"
+                            class="btn btn-info w-100 mr-1 mb-1"
+                            :disabled="data.item.id===null"
+                    >
+                        Delete
                     </b-button>
-                    <b-button v-else @click="changeIsActive(true, data.item,'is_active')" class="btn btn-info w-100 mr-1 mb-1"
-                              :disabled="data.item.id===null">
-                        Показать
+                    <b-button
+                            v-if="data.item.deleted_at==null"
+                            @click="edit(data.item.id)"
+                            class="btn btn-info w-100 mr-1 mb-1"
+                            :disabled="data.item.id===null"
+                    >
+                        Edit
                     </b-button>
-                    <b-button v-if="data.item.deleted_at==null" @click="remove(data.item.id)" class="btn btn-info w-100 mr-1 mb-1"
-                              :disabled="data.item.id===null">
-                        Удалить
-                    </b-button>
-                    <b-button v-else @click="restore(data.item.id)" class="btn btn-info w-100 mr-1 mb-1"
-                              :disabled="data.item.id===null">
-                        Восстановить
+                    <b-button
+                            v-else
+                            @click="restore(data.item.id)"
+                            class="btn btn-info w-100 mr-1 mb-1"
+                            :disabled="data.item.id===null"
+                    >
+                        Restore
                     </b-button>
                     <b-button v-if="data.item.deleted_at!=null" @click="destroy(data.item.id)" class="btn btn-info w-100 mr-1 mb-1"
                               :disabled="data.item.id===null">
-                        Удалить полностью
+                        Delete Completely
                     </b-button>
                 </b-input-group>
             </template>
             <template v-slot:row-details="row">
                 <b-card>
-                    <div class="row align-items-center justify-content-center m-auto">
+                    <div class="row align-items-center justify-content-start m-auto">
                         <div class="col-sm-12 col-md-6 mb-2">
-                            <b-form-group label="Номер производителя" label-size="sm" class="mb-0">
-                            <b-form-input :value="row.item.manufacturer_number"
+                            <b-form-group label="Type" label-size="sm" class="mb-0">
+                            <b-form-input :value="row.item.type"
                                           type="text"
-                                          @blur="save($event.target.value,row.item.id,'manufacturer_number')"
-                                          placeholder="Введите номер производителя"/>
+                                          @blur="save($event.target.value,row.item.id,'type')"
+                                          placeholder="Type"/>
                             </b-form-group>
                         </div>
                         <div class="col-sm-12 col-md-6 mb-2">
-                            <b-form-group label="Оригинальный номер" label-size="sm" class="mb-0">
-                            <b-form-input :value="row.item.original_number"
-                                          type="text"
-                                          @blur="save($event.target.value,row.item.id,'original_number')"
-                                          placeholder="Введите оригинальный номер"/>
+                            <b-form-group label="Size" label-size="sm" class="mb-0">
+                                <multiselect
+                                        placeholder="Choose sizes"
+                                        v-model="row.item.size"
+                                        :options="sizeOptions"
+                                        :multiple="true"
+                                        :taggable="true"
+                                        :hideSelected="true"
+                                        :searchable="false"
+                                        :select-label="''"
+                                        group-values="sizes"
+                                        group-label="label"
+                                        :group-select="true"
+                                        :deselectGroupLabel="'Cancel'"
+                                        :selectGroupLabel="''"
+                                >
+                                </multiselect>
                             </b-form-group>
                         </div>
                         <div class="col-sm-12 col-md-6 mb-2">
-                            <b-form-group label="Мин. в упаковке" label-size="sm" class="mb-0">
-                            <b-form-input :value="row.item.min_in_pack"
-                                          type="text"
-                                          @blur="save($event.target.value,row.item.id,'min_in_pack')"
-                                          placeholder="Введите минимальное кол-во в упаковке"/>
-                            </b-form-group>
-                        </div>
-                        <div class="col-sm-12 col-md-6 mb-2">
-                            <b-form-group label="Единицы измерения" label-size="sm" class="mb-0">
-                            <b-form-input :value="row.item.units"
-                                          type="text"
-                                          @blur="save($event.target.value,row.item.id,'units')"
-                                          placeholder="Введите единицы измерения"/>
-                            </b-form-group>
-                        </div>
-                        <div class="col-sm-12 col-md-6 mb-2">
-                            <b-form-group label="Ссылка" label-size="sm" class="mb-0">
-                            <b-form-input :value="row.item.site_url"
-                                          type="text"
-                                          @blur="save($event.target.value,row.item.id,'site_url')"
-                                          placeholder="Введите ссылку на товар"/>
-                            </b-form-group>
-                        </div>
-                        <div class="col-sm-12 col-md-6 mb-2">
-                            <b-form-group label="Картинка" label-size="sm" class="mb-0">
-                            <b-form-input :value="row.item.img"
-                                          type="text"
-                                          @blur="save($event.target.value,row.item.id,'img')"
-                                          placeholder="Введите ссылку на картинку"/>
+                            <b-form-group label="Color" label-size="sm" class="mb-0">
+                                <multiselect
+                                        placeholder="Choose colors"
+                                        v-model="row.item.color"
+                                        :options="colorOptions"
+                                        :multiple="true"
+                                        :taggable="true"
+                                        label="name"
+                                        track-by="value"
+                                        :hideSelected="true"
+                                        :searchable="false"
+                                        :select-label="''"
+                                        group-values="colors"
+                                        group-label="label"
+                                        :group-select="true"
+                                        :deselectGroupLabel="'Cancel'"
+                                        :selectGroupLabel="''"
+                                >
+                                </multiselect>
                             </b-form-group>
                         </div>
                         <div class="col-sm-12 col-md-12 mb-2">
-                            <b-form-group label="Описание" label-size="sm" class="mb-0">
+                            <b-form-group label="Description" label-size="sm" class="mb-0">
                                 <b-form-textarea
                                         id="textarea"
                                         v-model="row.item.description"
-                                        placeholder="Описание"
+                                        placeholder="Description"
                                         rows="3"
                                         max-rows="6"
                                         @blur="save($event.target.value,row.item.id,'description')"
@@ -312,13 +335,59 @@
                                 </b-form-textarea>
                             </b-form-group>
                         </div>
+                        <div class="col-sm-12 col-md-12 mb-2">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="large-12 medium-12 small-12 filezone">
+                                        <input type="file" id="files" :ref="'files'+row.item.id" multiple v-on:change="handleFiles(row.item)"/>
+                                        <p>
+                                            Drag and drop pictures here <br> or click to search
+                                        </p>
+                                    </div>
+                                    <draggable
+                                            :list="row.item.src"
+                                            class="file-listing"
+                                            ghost-class="ghost"
+                                    >
+                                        <div class="list-group-item"
+                                             v-for="(element, index) in row.item.src"
+                                             :key="element.name"
+                                        >
+                                            <img :src="'/images/'+element.name" class="preview"/>
+                                            {{ element.name }}
+                                            <div class="remove-container">
+                                                <a class="remove" v-on:click="deleteItem(element.name, index, row.item.src)" v-if="file_loading == false">Remove</a>
+                                            </div>
+                                        </div>
+                                    </draggable>
+
+                                    <h3 v-if="row.item.new_files && row.item.new_files.length>0">New files</h3>
+                                    <div v-if="row.item.new_files && row.item.new_files.length>0" :key="key" v-for="(file, key) in row.item.new_files" class="file-listing">
+<!--                                        <input ref="test"/>-->
+                                        {{key}}
+                                        <img v-if="row.item.new_src" class="preview" :src="row.item.new_src[key]"/>
+<!--                                        <img class="preview" :ref="'preview'+key"/>-->
+<!--                                        <img class="preview" ref="preview0"/>-->
+                                        {{ file.name }}
+                                        <div class="remove-container">
+                                            <a class="remove" v-on:click="removeFile(row.item, key)" v-if="file_loading == false">Cancel</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row w-100 m-auto">
+                                <b-button v-if="row.item.new_files && row.item.new_files.length>0" @click="saveImages(row.item.id)">
+                                    Save new pictures
+                                </b-button>
+                            </div>
+                        </div>
                     </div>
                 </b-card>
             </template>
             <template v-slot:table-busy>
                 <div class="text-center text-primary my-2">
                     <b-spinner class="align-middle"/>
-                    <strong>Загрузка...</strong>
+                    <strong>Loading...</strong>
                 </div>
             </template>
         </b-table>
@@ -361,25 +430,51 @@
 
                 fields: [
                     {key: 'id', label: 'ID', sortable: true, sortDirection: 'desc'},
-                    {key: 'title', label: 'Название', sortable: true, sortDirection: 'desc'},
-                    {key: 'category', label: 'Категория', sortable: true, sortDirection: 'desc'},
-                    {key: 'brand', label: 'Производитель', sortable: true, sortDirection: 'desc'},
-                    {key: 'quantity', label: 'Кол-во на складе', sortable: true, sortDirection: 'desc'},
-                    {key: 'price', label: 'Цена', sortable: true, sortDirection: 'desc'},
-                    {key: 'from_vk', label: 'Товар из ВК', sortable: true, sortDirection: 'desc'},
-                    {key: 'action', label: 'Действия'}
+                    {key: 'title', label: 'Title', sortable: true, sortDirection: 'desc'},
+                    {key: 'category', label: 'Category', sortable: true, sortDirection: 'desc'},
+                    {key: 'price', label: 'Price', sortable: true, sortDirection: 'desc'},
+                    {key: 'discount', label: 'Discount', sortable: true, sortDirection: 'desc'},
+                    {key: 'discount_price', label: 'Discount price', sortable: true, sortDirection: 'desc'},
+                    {key: 'quantity', label: 'Quantity', sortable: true, sortDirection: 'desc'},
+                    {key: 'action', label: 'Action'}
                 ],
                 in_process: [],
                 // loading: false,
                 options:[],
                 selected:[],
-                category:'Другое',
+                category:'Another',
                 modal:'',
+                sizeOptions: [
+                    { label: 'Выбрать все',
+                        sizes: [ 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL']}
+                ],
+                colorOptions: [
+                    { label: 'Выбрать все',
+                        colors: [
+                            {name:'Белый', value:'white'},
+                            {name:'Синий', value:'blue'},
+                            {name:'Красный', value:'red'},
+                            {name:'Желтый', value:'yellow'},
+                            {name:'Зелёный', value:'green'},
+                            {name:'Фиолетовый', value:'purple'},
+                            {name:'Оранжевый', value:'orange'},
+                            {name:'Чёрный', value:'black'}
+                        ]
+                    }
+                ],
+                file_loading: false,
+                productss:[],
             }
         },
         mounted() {
             // this.totalRows = this.products.length;
             this.totalRows = this.rows;
+            console.log(this.$refs);
+            this.productss = this.products;
+            this.productss.forEach(item => {
+                item.new_files=[];
+                item.new_src=[];
+            })
         },
         computed: {
             sortOptions() {
@@ -393,65 +488,77 @@
                 return this.$store.getters.admin_categories;
             },
         },
+        watch: {
+            productss: {
+                handler: function() {
+                    console.log('changed')
+                },
+                deep: true,
+                immediate:true
+            }
+        },
         methods: {
             sendMessage(message) {
                 this.$notify({
                     group: 'info',
                     type: 'success',
-                    title: 'Товары',
+                    title: 'Products',
                     text: message
                 });
+            },
+            edit(id) {
+                window.location.href = `/admin/products/edit/${id}`;
             },
             remove(id) {
                 this.$store.dispatch('removeProduct', id)
                     .then(resp => {
-                    this.sendMessage(resp.data.message)
-                        this.totalRows = this.products.length
+                        this.sendMessage(resp.data.message);
+                        this.totalRows = this.productss.length
                 });
             },
             restore(id) {
                 this.$store.dispatch('restoreProduct', id)
                     .then(resp => {
-                        this.sendMessage(resp.data.message)
-                        this.totalRows = this.products.length
+                        this.sendMessage(resp.data.message);
+                        this.totalRows = this.productss.length
                     });
             },
             removeAll() {
-                var ids=[];
+                let ids=[];
                 this.selected.forEach(item=>{
                     ids.push(item.id);
-                })
+                });
                 this.$store.dispatch('removeAllProduct', {ids: ids}).then(resp => {
-                    this.sendMessage(resp.data.message)
-                    this.totalRows = this.products.length
+                    this.sendMessage(resp.data.message);
+                    this.totalRows = this.productss.length
                 })
             },
             restoreAll() {
-                var ids=[];
+                let ids=[];
                 this.selected.forEach(item=>{
                     ids.push(item.id);
-                })
+                });
                 this.$store.dispatch('restoreAllProduct', {ids: ids})
                     .then(resp => {
-                        this.sendMessage(resp.data.message)
-                        this.totalRows = this.products.length
+                        this.sendMessage(resp.data.message);
+                        this.totalRows = this.productss.length;
                     });
             },
             destroyAll() {
-                var ids=[];
+                let ids=[];
                 this.selected.forEach(item=>{
                     ids.push(item.id);
-                })
+                });
                 this.$store.dispatch('forceDeleteAllProduct', {ids: ids}).then(resp => {
-                    this.sendMessage(resp.data.message)
-                    this.totalRows = this.products.length
+                    this.sendMessage(resp.data.message);
+                    this.totalRows = this.productss.length;
                 })
             },
             saveAll(value, key) {
-                var ids=[];
+                let ids=[];
                 this.selected.forEach(item=>{
                     ids.push(item.id);
-                })
+                });
                 this.$store.dispatch('saveAllProduct', {
                     ids: ids,
                     key: key,
@@ -470,8 +577,8 @@
             },
             destroy(id) {
                 this.$store.dispatch('forceDeleteProduct', id).then(resp => {
-                    this.sendMessage(resp.data.message)
-                    this.totalRows = this.products.length
+                    this.sendMessage(resp.data.message);
+                    this.totalRows = this.productss.length
                 })
             },
             changeIsActive(value, item, key){
@@ -485,7 +592,7 @@
                     value: value
                 }).then(resp => {
                     this.$store.commit('saveProduct', resp.data.product);
-                    this.sendMessage(resp.data.message)
+                    this.sendMessage(resp.data.message);
                 });
             },
             onFiltered(filteredItems) {
@@ -507,6 +614,58 @@
             },
             clearSelected() {
                 this.$refs.selectableTable.clearSelected()
+            },
+            removeFile( item, key ){
+                item.new_files.splice( key, 1 );
+                item.new_src.splice( key, 1 );
+                this.getImagePreviews(item.new_files, item.new_src);
+            },
+            deleteItem() {
+
+            },
+            saveImages(id)
+            {
+
+            },
+            handleFiles(item) {
+                if(!item.new_files) {
+                    item.new_files=[];
+                }
+                item.new_src=[];
+                let uploadedFiles = this.$refs['files'+item.id].files;
+
+                for(let i = 0; i < uploadedFiles.length; i++) {
+                    if (/\.(jpe?g|png|gif|svg)$/i.test(uploadedFiles[i].name))
+                    {
+                        item.new_files.push(uploadedFiles[i]);
+                        this.getImagePreviews(item.new_files, item.new_src);
+                    }
+                    else
+                    {
+                        this.sendMessage('This file has wrong format')
+                        // break;
+                    }
+
+                }
+
+            },
+            getImagePreviews(arr, arr_src){
+
+                for( let i = 0; i < arr.length; i++ ) {
+                    if ( /\.(jpe?g|png|gif|svg)$/i.test( arr[i].name ) ) {
+                        let reader = new FileReader();
+                        reader.addEventListener("load", function(){
+                            arr_src.push(reader.result);
+                            // this.$refs['preview'+i][0].src = reader.result;
+                        }.bind(this), false);
+                        reader.readAsDataURL( arr[i] );
+                    }else{
+                        this.$nextTick(function(){
+                            arr_src.push('/images/product.jpg');
+                            // this.$refs['preview'][0].src = '/images/product.jpg';
+                        });
+                    }
+                }
             },
         }
     }
@@ -542,5 +701,96 @@
         clear: both;
         content: "";
     }
+}
+input[type="file"]{
+    opacity: 0;
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+}
+.filezone {
+    outline: 2px dashed grey;
+    outline-offset: -10px;
+    background: #ccc;
+    color: dimgray;
+    padding: 10px 10px;
+    min-height: 200px;
+    position: relative;
+    cursor: pointer;
+}
+.filezone:hover {
+    background: #c0c0c0;
+}
+
+.filezone p {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 50px 50px 50px 50px;
+}
+input[type="file"]{
+    opacity: 0;
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+}
+.filezone {
+    outline: 2px dashed grey;
+    outline-offset: -10px;
+    background: #ccc;
+    color: dimgray;
+    padding: 10px 10px;
+    min-height: 200px;
+    position: relative;
+    cursor: pointer;
+}
+.filezone:hover {
+    background: #c0c0c0;
+}
+
+.filezone p {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 50px 50px 50px 50px;
+}
+div.file-listing img{
+    max-width: 90%;
+}
+
+div.file-listing{
+    margin: auto;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+div.file-listing img{
+    height: 100px;
+}
+div.success-container{
+    text-align: center;
+    color: green;
+}
+
+div.remove-container{
+    text-align: center;
+}
+
+div.remove-container a{
+    color: red;
+    cursor: pointer;
+}
+
+a.submit-button {
+    display: block;
+    margin: auto;
+    text-align: center;
+    width: 200px;
+    padding: 10px;
+    text-transform: uppercase;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    margin-top: 20px;
 }
 </style>

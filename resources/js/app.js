@@ -24,14 +24,17 @@ import Notifications from 'vue-notification';
 import CallbackForm from  './components/CallbackForm';
 import CartCountIndex from  './components/CartCountIndex';
 import Cart from  './components/Cart';
-// import Vin from  './components/Vin';
+import CartPage from  './pages/CartPage';
+import Shop from  './pages/Shop';
 import History from  './components/DataTable';
-// import Tabs from  './components/Tabs';
 import UniqueOrder from "./components/UniqueOrder";
-// import VendorSearch from "./components/VendorSearch";
 import Products from "./components/Products";
 import AdminProducts from "./pages/products/Index";
 import AdminCategories from "./pages/categories/Index";
+import ProductPage from "./pages/ProductPage";
+import PageHeader from "./components/PageHeader";
+import AdminProductEdit from "./pages/products/Edit";
+import AdminProductCreate from "./pages/products/Create";
 
 import VueTheMask from 'vue-the-mask';
 Vue.use(VueTheMask);
@@ -44,18 +47,22 @@ Vue.component('add-to-cart-btn', AddToCartBtn);
 Vue.component('callback-form', CallbackForm);
 Vue.component('cart-count-index', CartCountIndex);
 Vue.component('cart', Cart);
-// Vue.component('vin', Vin);
+Vue.component('cart-page', CartPage);
+Vue.component('shop', Shop);
 Vue.component('history', History);
 Vue.component('u-order', UniqueOrder);
-// Vue.component('vendor-search', VendorSearch);
 Vue.component('products', Products);
-Vue.component('admin-products', AdminProducts)
-Vue.component('admin-categories', AdminCategories)
+Vue.component('admin-products', AdminProducts);
+Vue.component('admin-product-edit', AdminProductEdit);
+Vue.component('admin-product-create', AdminProductCreate);
+Vue.component('admin-categories', AdminCategories);
+Vue.component('product-page', ProductPage);
+Vue.component('page-header', PageHeader);
 
 Vue.use(Notifications);
 Vue.use(VueCurrencyFilter,
     {
-        symbol : '₽',
+        symbol : '£',
         thousandsSeparator: '.',
         fractionCount: 2,
         fractionSeparator: ',',
@@ -63,30 +70,6 @@ Vue.use(VueCurrencyFilter,
         symbolSpacing: true
     })
 
-// Vue.component('tabs', Tabs);
-// Vue.component('tab', {
-//     template: `
-//         <div v-show="isActive"><slot></slot></div>
-//     `,
-//     props: {
-//         name: { required: true },
-//         selected: { default: false}
-//     },
-//     data() {
-//         return {
-//             isActive: false
-//         };
-//     },
-//     computed: {
-//         href() {
-//             return '#' + this.name.toLowerCase().replace(/ /g, '-');
-//         }
-//     },
-//     mounted() {
-//         this.isActive = this.selected;
-//     }
-// });
-// import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 Vue.use(BootstrapVue)
@@ -118,7 +101,46 @@ Vue.use(VueScrollTo, {
     onCancel: false,
     x: false,
     y: true
-})
+});
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/material.css'
+Vue.component('VueSlider', VueSlider);
+
+import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
+import { required, email, numeric, alpha } from 'vee-validate/dist/rules';
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
+extend('email', {
+    ...email,
+    // message: 'Поле E-mail должно быть действительным адресом электронной почты'
+    message: 'The Email field must be a valid email address'
+});
+extend('required', {
+    ...required,
+    // message: 'Это поле обязательно к заполнению'
+    message: 'This field is required'
+});
+extend('numeric', {
+    ...numeric,
+    // message: 'Это поле должно состоять только из цифр'
+    message: 'This field must be numeric'
+});
+extend('alpha', {
+    ...alpha,
+    // message: 'Это поле должно состоять только из букв'
+    message: 'This field must contain only letters'
+});
+extend('min', {
+    validate(value, args) {
+        return value.length >= args.length;
+    },
+    params: ['length'],
+    // message: 'Это поле должно быть действительным номером телефона'
+    message: 'This field must be a valid phone number'
+});
+import draggable from 'vuedraggable';
+Vue.component('draggable', draggable);
+
 const app = new Vue({
     store,
     el: '#app'

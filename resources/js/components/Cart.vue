@@ -214,7 +214,7 @@
                 this.$store.dispatch("decQuantity", id)
             },
             remove(id) {
-                this.$store.dispatch("removeProduct", id)
+                this.$store.dispatch("removeCartProduct", id)
             },
             clearCart() {
                 this.$store.dispatch("clearCart")

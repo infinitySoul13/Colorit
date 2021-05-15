@@ -12,11 +12,5 @@ class Service extends Model
     protected $fillable = [
         'title',
         'price',
-        'description',
-        'category',
-        'src',
-        'rating',
-        'size',
-        'color'
     ];
 }

@@ -117,10 +117,15 @@ class WelcomeController extends Controller
         $name = $request->get("name")??'';
         $phone = $request->get("phone")??'';
         $message = $request->get("message")??'';
+        $text =  "<b>Name: </b>$name\n"
+            . "<b>Phone: </b>$phone\n"
+            . "<b>Date: </b>".Carbon::now('+3:00')."\n"
+            .  $message;
         Telegram::sendMessage([
-            'chat_id' => env("CHANNEL_ID"),
-            'parse_mode' => 'Markdown',
-            'text' => sprintf("*Заявка на обратный звонок*\n_%s_\n_%s_\n%s",$name,$phone,$message),
+//            'chat_id' => env("CHANNEL_ID"),
+            'chat_id' => -1001256696960,
+            'parse_mode' => 'HTML',
+            'text' => $text ,
             'disable_notification' => 'false'
         ]);
     }

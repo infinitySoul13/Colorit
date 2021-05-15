@@ -105,56 +105,6 @@
                     />
                 </b-input-group>
             </template>
-            <template v-slot:cell(words)="data">
-                <b-input-group size="sm">
-                    <multiselect
-                            v-model="data.item.words"
-                            tag-placeholder="Добавить слово"
-                            placeholder="Введите новое слово"
-                            :options="data.item.words"
-                            :multiple="true"
-                            :taggable="true"
-                            selectedLabel="Выбрано"
-                            deselectLabel="Удалить"
-                            :limit="2"
-                            :id="data.item"
-                            @tag="addTag"
-                            @remove="removeTag"
-                    >
-                        <template slot="limit" >
-                                <span class="multiselect__single">
-                                    и ещё {{ data.item.words.length-2 }} {{data.item.words.length-2 | pluralizeWords}}
-                                </span>
-                        </template>
-                        <template slot="noOptions" >
-                                <span class="multiselect__single">
-                                   Введите новое слово
-                                </span>
-                        </template>
-                        <template slot="selection" slot-scope="{ values, search, isOpen }">
-                                <span class="multiselect__single" v-if="values.length>3 && !isOpen">
-                                    {{ values.length }} {{values.length | pluralizeWords}} выбрано
-                                </span>
-                        </template>
-                    </multiselect>
-                </b-input-group>
-            </template>
-            <template v-slot:cell(img)="data">
-                <b-input-group size="sm">
-                    <b-form-input :value="data.item.img"
-                                  @blur="save($event.target.value,data.item.id,'img')"
-                                  placeholder="Введите ссылку на картинку категории"
-                    />
-                </b-input-group>
-            </template>
-<!--            <template v-slot:cell(quantity)="data">-->
-<!--                <b-input-group size="sm">-->
-<!--                    <b-form-input :value="data.item.quantity"-->
-<!--                                  type="number"-->
-<!--                                  @blur="save($event.target.value,data.item.id,'quantity')"-->
-<!--                                  placeholder="Введите кол-во"/>-->
-<!--                </b-input-group>-->
-<!--            </template>-->
 
             <template v-slot:cell(action)="data">
                 <b-input-group size="sm">
@@ -216,8 +166,7 @@
                 fields: [
                     {key: 'id', label: 'ID', sortable: true, sortDirection: 'desc'},
                     {key: 'title', label: 'Название', sortable: true, sortDirection: 'desc'},
-                    {key: 'words', label: 'Слова для поиска', sortable: true, sortDirection: 'desc'},
-                    {key: 'img', label: 'Картинка', sortable: true, sortDirection: 'desc'},
+                    {key: 'alias', label: 'Слова для поиска', sortable: true, sortDirection: 'desc'},
                     {key: 'products_count', label: 'Товаров в категории', sortable: true, sortDirection: 'desc'},
                     {key: 'action', label: 'Действия'}
                 ],

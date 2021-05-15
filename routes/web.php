@@ -11,8 +11,6 @@
 |
 */
 
-//use \ATehnix\VkClient\Requests\Request as VkRequest;
-//use \ATehnix\VkClient\Auth as VkAuth;
 use App\Http\Middleware\IsAdmin;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -28,6 +26,14 @@ Route::get('/', function () {
 //    return view('main.main',compact('products','categories','defaultCat'));
     return view('main.main');
 });
+Route::get('/shop', function () {
+    $products = \App\Product::all();
+    return view('main.shop', compact('products'));
+});
+Route::get('/cart', function () {
+    $products = \App\Product::all();
+    return view('main.cart', compact('products'));
+});
 
 Route::match(['get', 'post'], '/botman', 'BotManController@handle');
 Route::get('/botman/tinker', 'BotManController@tinker');
@@ -36,48 +42,18 @@ Auth::routes();
 
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::post('vin/create', 'VinController@create');
-Route::get('vin/delete/{id}', 'VinController@destroy');
-
-Route::get('vin/categories', 'VinController@getCategories');
-Route::get('vin/body/{categroyId}', 'VinController@getBodyStyles');
-Route::get('vin/marks/{categroyId}', 'VinController@getMarks');
-Route::get('vin/models/{categroyId}/{marksId}', 'VinController@getModels');
-Route::get('vin/gear/{categroyId}', 'VinController@getGearboxes');
-Route::get('vin/driver/{categroyId}', 'VinController@getDriverType');
-Route::get('vin/fuel', 'VinController@getFuelType');
-Route::get('vin/options/{categroyId}', 'VinController@getAutoOptions');
-Route::get('vin/history/{user_id}', 'VinController@getVinRequests');
-Route::post('sendVinRequest', 'VinController@sendVinRequest');
-Route::post('vin/tyres/add', 'VinController@addTyres');
-Route::post('vin/disks/add', 'VinController@addDisks');
-Route::post('sendTyresRequest', 'VinController@sendTyresRequest');
-Route::post('sendDisksRequest', 'VinController@sendDisksRequest');
-
-Route::post('vendorSearch', 'VinController@vendorSearch');
-
 Route::get('checkPhone/{phone}', 'UsersController@checkPhone');
 Route::post('addName', 'UsersController@addName');
+Route::post('/sendReview', 'ReviewController@store');
 
 Route::prefix('products')->group(function () {
+//    Route::get('/{id}', function ($id) {
+//        $product = \App\Product::find($id);
+//        return view('main.product', compact('product'));
+//    });
+    Route::get('/{id}', 'ProductController@show');
     Route::get('/more/{category}', 'ProductController@more');
     Route::get('/categories', 'ProductController@categories');
-    Route::middleware([IsAdmin::class])->group(function () {
-        Route::get('/get', 'ProductController@get')->middleware('auth');
-        Route::put('/{id}', 'ProductController@update');
-        Route::delete('/{id}', 'ProductController@destroy');
-        Route::post('/restore/{id}', 'ProductController@restore');
-        Route::post('/forceDelete/{id}', 'ProductController@forceDelete');
-        Route::post('/updateAll', 'ProductController@updateAll');
-        Route::post('/deleteAll', 'ProductController@destroyAll');
-        Route::post('/restoreAll', 'ProductController@restoreAll');
-        Route::post('/forceDeleteAll', 'ProductController@forceDeleteAll');
-        Route::post('/upload', 'ProductController@uploadFile');
-        Route::post('/status', 'ProductController@status');
-        Route::get('/uploadVk', 'ProductController@uploadVk');
-    });
-    Route::resource('/', 'ProductController');
 });
 Route::middleware([IsAdmin::class])->group(function () {
     Route::prefix('categories')->group(function () {
@@ -90,10 +66,28 @@ Route::middleware([IsAdmin::class])->group(function () {
     });
 });
     Route::prefix('admin')->group(function () {
-        Route::get("/", "ProductController@index")->name('admin.index')->middleware('auth');
-        Route::middleware([IsAdmin::class])->group(function () {
-            Route::get("/categories", "CategoryController@index")->name('admin.categories')->middleware('auth');
-            Route::get('/users', "UsersController@index")->name('admin.users.index')->middleware('auth');
+        Route::middleware([IsAdmin::class, 'auth'])->group(function () {
+            Route::get("/", "ProductController@index")->name('admin.index');
+            Route::get("/categories", "CategoryController@index")->name('admin.categories');
+            Route::get('/users', "UsersController@index")->name('admin.users.index');
+            Route::prefix('products')->group(function () {
+                Route::view("/create", "admin.products.create")->name("admin.products.create");
+                Route::get('/edit/{id}', "ProductController@edit")->name("admin.products.edit");
+                Route::get('/get', 'ProductController@get')->middleware('auth');
+                Route::post('/', 'ProductController@store');
+                Route::put('/{id}', 'ProductController@update');
+                Route::delete('/{id}', 'ProductController@destroy');
+                Route::post('/restore/{id}', 'ProductController@restore');
+                Route::post('/forceDelete/{id}', 'ProductController@forceDelete');
+                Route::post('/updateAll', 'ProductController@updateAll');
+                Route::post('/deleteAll', 'ProductController@destroyAll');
+                Route::post('/restoreAll', 'ProductController@restoreAll');
+                Route::post('/forceDeleteAll', 'ProductController@forceDeleteAll');
+                Route::post('/upload', 'ProductController@uploadFile');
+                Route::post('/upload-files', 'ProductController@uploadFiles');
+                Route::post('/delete-file', 'ProductController@deleteFile');
+//                Route::resource('/', 'ProductController');
+            });
         });
 
 //    Route::post('/search', 'HomeController@search')

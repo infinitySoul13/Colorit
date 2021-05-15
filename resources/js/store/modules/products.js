@@ -28,7 +28,7 @@ const getters = {
 const actions = {
     loadDataProduct({state, commit}) {
         return axios
-            .get('/products/get')
+            .get('/admin/products/get')
             .then(resp => {
                 state.products = resp.data.products;
                 state.products_totalRows = state.products.length;
@@ -39,7 +39,7 @@ const actions = {
     },
     async loadCategoriesForShop({state, commit}) {
         return await axios
-            .get('/products/categories')
+            .get('/admin/products/categories')
             .then(resp => {
                 state.product_categories = resp.data.categories;
                 state.products = resp.data.products;
@@ -59,48 +59,50 @@ const actions = {
     async removeProduct({state, commit}, id) {
         commit('removeProduct', id)
         return await axios
-            .delete(`/products/${id}`)
+            .delete(`/admin/products/${id}`)
     },
     async forceDeleteProduct({state, commit}, id) {
         commit('forceDeleteProduct', id)
         return await axios
-            .post(`/products/forceDelete/${id}`)
+            .post(`/admin/products/forceDelete/${id}`)
     },
     async restoreProduct({state, commit}, id) {
         commit('restoreProduct', id)
         return await axios
-            .post(`/products/restore/${id}`)
+            .post(`/admin/products/restore/${id}`)
     },
     async removeAllProduct({state, commit}, ids) {
         commit('removeAllProduct', ids)
         return await axios
-            .post(`/products/deleteAll`, ids)
+            .post(`/admin/products/deleteAll`, ids)
     },
     async forceDeleteAllProduct({state, commit}, ids) {
         commit('forceDeleteAllProduct', ids)
         return await axios
-            .post(`/products/forceDeleteAll/`, ids)
+            .post(`/admin/products/forceDeleteAll/`, ids)
     },
     async restoreAllProduct({state, commit}, ids) {
         commit('restoreAllProduct', ids)
         return await axios
-            .post(`/products/restoreAll`, ids)
+            .post(`/admin/products/restoreAll`, ids)
     },
     async saveAllProduct({state, commit}, param) {
         return await axios
-            .post(`/products/updateAll`, param);
+            .post(`/admin/products/updateAll`, param);
     },
     async saveProduct({state, commit}, param) {
         return await axios
-            .put(`/products/${param.id}`, {
+            .put(`/admin/products/${param.id}`, {
                 param: param.key,
                 value: param.value
             });
     },
     async addProduct({state, commit}, product) {
-        await axios
-            .post('/products').then(resp => {
-                commit('addProduct', resp.data.product)
+        return await axios
+            .post('/admin/products', product, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
             })
     },
     async addMoreProducts({state, commit}, products) {
@@ -109,12 +111,30 @@ const actions = {
     incPage({state, commit}, category) {
         commit('incPage', category);
     },
+    async uploadFiles({state, commit}, files) {
+        return await axios.post('/admin/products/upload-files', files, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        })
+        //     .then(resp => {
+        //     commit('saveProduct', resp.data.product);
+        // })
+
+    },
+    async deleteFile({state, commit}, file) {
+        return await axios.post('/admin/products/delete-file', file)
+        //     .then(resp => {
+        //     commit('saveProduct', resp.data.product);
+        // })
+
+    },
 }
 
 // mutations
 const mutations = {
     addProduct(state, payload) {
-        state.products.push(payload)
+        state.products.push(payload);
         state.products_totalRows = state.products.length;
     },
     addMoreProducts(state, payload) {
@@ -123,11 +143,11 @@ const mutations = {
         })
     },
     saveProduct(state, payload) {
-        let product = state.products.findIndex(x => x.id === payload.id)
+        let product = state.products.findIndex(x => x.id === payload.id);
         state.products[product] = payload;
     },
     async removeProduct(state, payload) {
-        let prod = state.products.findIndex(x => x.id === payload)
+        let prod = state.products.findIndex(x => x.id === payload);
 
         if (prod >= 0) {
             let tmp = state.products[prod];

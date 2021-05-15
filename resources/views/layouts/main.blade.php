@@ -20,14 +20,15 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Styles -->
+    <link rel='stylesheet' href="{{ asset('css/app.css?ver=2.0.0')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-icon-fonts-css' href="{{ asset('css/fonts.css?ver=2.0.0')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-font-css' href='http://fonts.googleapis.com/css?family=Poppins%3A200%2C300%2C300i%2C500%2C800%7CPoiret+One%3A400&#038;subset=latin&#038;ver=2.0.0' type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-woo-css' href="{{ asset('css/woo.css?ver=2.0.0')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-css-style-css' href="{{ asset('style.css?ver=5.0.11')}}" type='text/css' media='all' />
-    <link rel='stylesheet' id='bootstrap-css' href="{{ asset('css/bootstrap.min.css?ver=2.0.0')}}" type='text/css' media='all' />
+    <link rel='stylesheet' id='bootstrap-css' href="{{ asset('css/bootstrap.min.css')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-animations-css' href="{{ asset('css/animations.css?ver=2.0.0')}}" type='text/css' media='all' />
     <link rel='stylesheet' id='colorlab-main-css' href="{{ asset('css/main.css?ver=2.0.0')}}" type='text/css' media='all' />
-    <link rel='stylesheet' href="{{ asset('css/app.css?ver=2.0.0')}}" type='text/css' media='all' />
+{{--    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet">--}}
 </head>
 
 <body class="home page-template page-template-page-templates page-template-full-width page-template-page-templatesfull-width-php page page-id-9 woocommerce-no-js masthead-fixed full-width footer-widgets grid">
@@ -37,7 +38,7 @@
     </div>
 
     <div id="app">
-{{--        <notifications group="info" :position="'top left'" :max="5"/>--}}
+        <notifications group="info" :position="'top left'" :max="5"></notifications>
         @yield('content')
     </div>
 
@@ -66,8 +67,6 @@
     <script type='text/javascript' src="{{ asset('js/woo.js?ver=2.0.0')}}"></script>
     <script type='text/javascript' src="{{ asset('js/selectize.min.js?ver=2.0.0')}}"></script>
     <script type='text/javascript' src="{{ asset('js/main.js?ver=2.0.0')}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-scrollto"></script>
     <script src="{{asset('js/app.js')}}"></script>
 
 </body>

@@ -1,51 +1,53 @@
 <template>
     <b-container fluid="lg">
-        <notifications group="info"/>
-
-        <div class="row mb-2">
-            <div class="col-md-4 col-sm-12"><b-button v-b-toggle.collapse-1 variant="primary" class="mt-1 mb-1 w-100">Загрузить файл</b-button></div>
-            <div class="col-md-4 col-sm-12">
-                <b-button
-                        variant="primary"
-                        class="mt-1 mb-1 w-100"
-                        href="https://oauth.vk.com/authorize?client_id=7727122&scope=market&redirect_uri=https://xn--80aeg0bdbz.com/products/uploadVk&response_type=code&display=page"
-                >
-                    Загрузить из ВК
-                </b-button>
-            </div>
-            <div class="col-md-12 col-sm-12">
-                <b-collapse id="collapse-1" class="">
-                    <b-container fluid>
-                        <b-row>
-                            <b-col lg="12" class="my-1" v-if="!loading">
-                                <div class="large-12 medium-12 small-12 filezone" >
-                                    <input type="file" id="files" ref="files" v-on:change="handleFiles()" :disabled="loading"/>
-                                    <p>
-                                        Перетащите файл сюда <br>или нажмите для поиска
-                                    </p>
-                                </div>
-                                <hr>
-                            </b-col>
-                            <b-col lg="12" class="my-1"  v-if="loading">
-                                <div class="text-center text-primary my-2">
-                                    <b-spinner class="align-middle"/>
-                                    <strong>Загрузка...</strong>
-                                </div>
-                            </b-col>
-                        </b-row>
-                    </b-container>
-                </b-collapse>
-            </div>
-        </div>
-
+<!--        <div class="row mb-2">-->
+<!--&lt;!&ndash;            <div class="col-md-4 col-sm-12"><b-button v-b-toggle.collapse-1 variant="primary" class="mt-1 mb-1 w-100">Загрузить файл</b-button></div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="col-md-4 col-sm-12">&ndash;&gt;-->
+<!--&lt;!&ndash;                <b-button&ndash;&gt;-->
+<!--&lt;!&ndash;                        variant="primary"&ndash;&gt;-->
+<!--&lt;!&ndash;                        class="mt-1 mb-1 w-100"&ndash;&gt;-->
+<!--&lt;!&ndash;                        href="https://oauth.vk.com/authorize?client_id=7727122&scope=market&redirect_uri=https://xn&#45;&#45;80aeg0bdbz.com/products/uploadVk&response_type=code&display=page"&ndash;&gt;-->
+<!--&lt;!&ndash;                >&ndash;&gt;-->
+<!--&lt;!&ndash;                    Загрузить из ВК&ndash;&gt;-->
+<!--&lt;!&ndash;                </b-button>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="col-md-12 col-sm-12">&ndash;&gt;-->
+<!--&lt;!&ndash;                <b-collapse id="collapse-1" class="">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-container fluid>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <b-row>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <b-col lg="12" class="my-1" v-if="!loading">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <div class="large-12 medium-12 small-12 filezone" >&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <input type="file" id="files" ref="files" v-on:change="handleFiles()" :disabled="loading"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <p>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        Перетащите файл сюда <br>или нажмите для поиска&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </p>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <hr>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </b-col>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <b-col lg="12" class="my-1"  v-if="loading">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <div class="text-center text-primary my-2">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <b-spinner class="align-middle"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <strong>Загрузка...</strong>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </b-col>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </b-row>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </b-container>&ndash;&gt;-->
+<!--&lt;!&ndash;                </b-collapse>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--        </div>-->
+        <b-row class="m-auto w-100 h-100 align-items-center" v-if="!initial_loading">
+            <b-button variant="primary" class="mt-1 mb-1 float-right" :href="'admin/products/create'">
+                Create product
+            </b-button>
+        </b-row>
         <b-tabs content-class="mt-3" v-if="!initial_loading">
-            <b-tab title="Все" active>
+            <b-tab title="All" active>
                 <product-table :products="products"
                        :loading="loading"
                                :rows="products_totalRows"
                 />
             </b-tab>
-            <b-tab title="Удаленные">
+            <b-tab title="Deleted">
                 <product-table :products="deleted_products"
                        :loading="loading"
                                :rows="deleted_products_totalRows"
@@ -55,7 +57,7 @@
         <b-row class="m-auto w-100 h-100 align-items-center justify-content-center" v-else>
             <div class="text-center text-primary my-2">
                 <b-spinner class="align-middle"/>
-                <strong>Загрузка...</strong>
+                <strong>Loading...</strong>
             </div>
         </b-row>
     </b-container>
@@ -104,72 +106,15 @@
             });
         },
         methods:{
-            handleFiles() {
-                this.loading = true;
-                let uploadedFiles = this.$refs.files.files;
-
-                for(var i = 0; i < uploadedFiles.length; i++) {
-                    if (/\.(xlsx|xls|csv)$/i.test(uploadedFiles[i].name))
-                    {
-                        let formData = new FormData();
-                        formData.append('file', uploadedFiles[i]);
-                        setTimeout(this.checkStatus, 15000);
-                        axios.post(`/products/upload`,
-                            formData,
-                            {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            })
-                            .then(resp => {
-                                // this.loading = false;
-                                this.$store.dispatch('loadDataProduct');
-                                this.$store.dispatch('loadDataCategory').then(() => {
-                                    this.loading = false;
-                                    this.$refs.selectableTable.refresh()
-                                });
-                                // this.loading = false;
-                                this.sendMessage(resp.data.message);
-                                // this.loadData()
-                            });
-
-                    }
-                    else
-                    {
-                        this.loading = false;
-                        this.sendMessage('Неверный формат файла', 'error');
-                        break;
-                    }
-                }
-            },
-            uploadVk() {
-                this.loading = true;
-                axios.get(`/products/uploadVk`).then(resp=>{
-                    this.sendMessage(resp.data.message);
-                    this.loading = false;
-                    this.$store.dispatch('loadDataProduct');
-                })
-            },
             sendMessage(message, type='success') {
                 this.$notify({
                     group: 'info',
                     type: type,
-                    title: 'Товары',
+                    title: 'Products',
                     text: message
                 });
             },
-            checkStatus () {
-                axios.post(`/products/status`).then(resp=>{
-                    // if(resp.data.status == 1) {
-                    //     this.loading = false;
-                    // }
-                    // else {
-                    if(resp.data.status !== 1) {
-                        this.sendMessage(resp.data.message);
-                        setTimeout(this.checkStatus, 30000);
-                    }
-                })
-            }
+
         }
 
     }

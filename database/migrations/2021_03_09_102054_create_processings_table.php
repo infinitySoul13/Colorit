@@ -15,6 +15,9 @@ class CreateProcessingsTable extends Migration
     {
         Schema::create('processings', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title')->default('');
+            $table->decimal('price', 8, 2)->default(0.0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

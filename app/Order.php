@@ -13,6 +13,6 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'telephone', 'email', 'message', 'status'
+        'name', 'phone', 'email', 'message', 'status'
     ];
 }

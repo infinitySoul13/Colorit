@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
         $user = User::create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
-//            'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
             'telegram_chat_id' => '',
@@ -28,55 +27,26 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Category::create([
-            'title' =>'Масло трансмиссионное',
-            'words' => ["трансмиссионное", "трансмис", "трансмиссион", "трансм","трансмиccионное"],
-            'img' => '/assets/images/cat_6.jpg'
+            'title' =>'Clothing',
         ]);
         Category::create([
-            'title' =>'Щетки',
-            'words' => ['Щетки','Щётки','Щетка','Щётка'],
-            'img' => '/assets/images/cat.png'
+            'title' =>'Music',
         ]);
         Category::create([
-            'title' =>'Масло моторное',
-            'words' => ["моторное","мот", "мотор"],
-            'img' => '/assets/images/cat_8.jpg'
+            'title' =>'Decor',
         ]);
         Category::create([
-            'title' =>'АКБ',
-            'words' => ['АКБ'],
-            'img' => '/assets/images/cat_9.jpg'
+            'title' =>'Accessories',
         ]);
         Category::create([
-            'title' =>'Лампы',
-            'words' => ['Лампа'],
-            'img' => '/assets/images/cat_10.jpg'
+            'title' =>'Hoodies',
         ]);
         Category::create([
-            'title' =>'Жидкость',
-            'words' => ['Жидкость'],
-            'img' => '/assets/images/cat_3.jpg'
-        ]);
-        Category::create([
-            'title' =>'Выхлопы',
-            'words' => ['Выхлоп'],
-            'img' => '/assets/images/cat_4.jpg'
-        ]);
-        Category::create([
-            'title' =>'Кузовы',
-            'words' => ['Кузов'],
-            'img' => '/assets/images/cat_7.jpg'
-        ]);
-        Category::create([
-            'title' =>'Дворники',
-            'words' => ['Дворники'],
-            'img' => '/assets/images/cat.png'
-        ]);
-        Category::create([
-            'title' =>'Другое',
-            'words' => [],
-            'img' => '/assets/images/cat.png'
-        ]);
+            'title' =>'Tshirts',
 
+        ]);
+        Category::create([
+            'title' =>'Uncategorized',
+        ]);
     }
 }

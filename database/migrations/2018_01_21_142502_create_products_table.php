@@ -14,28 +14,19 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title')->default('');
-            $table->string('brand')->default('');
-            $table->string('manufacturer_number')->default('')->nullable();
-            $table->string('category')->default('')->nullable();
-            $table->string('units')->default('')->nullable();
-            $table->string('min_in_pack')->default('')->nullable();
-            $table->string('original_number')->default('')->nullable();
-
+            $table->bigIncrements('id');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->string('type')->nullable();
+            $table->string('category')->nullable();
+            $table->json('src');
             $table->decimal('price', 8, 2)->default(0.0);
-            // $table->decimal('old_price', 8, 2)->nullable();
+            $table->decimal('discount', 8, 2)->default(0.0);
+            $table->decimal('discount_price', 8, 2)->default(0.0);
+            $table->json('color')->nullable();
+            $table->json('size')->nullable();
+//            $table->integer('rating')->default(0);
             $table->integer('quantity')->default(0)->nullable();
-//            $table->boolean('is_top')->default(false);
-//            $table->boolean('is_new')->default(false);
-            $table->boolean('is_active')->default(true)->nullable();
-            $table->string('img',1000)->default('')->nullable();
-
-            $table->longText('description')->nullable();
-            $table->string('site_url',1000)->default('')->nullable();
-            $table->boolean('from_vk')->default(false)->nullable();
-            // $table->integer('category_id')->unsigned();
-            // $table->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
             $table->softDeletes();
         });

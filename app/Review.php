@@ -13,7 +13,10 @@ class Review extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'telephone', 'email', 'message'
-
+        'name', 'phone', 'email', 'message'
     ];
+    public function product()
+    {
+        return $this->belongsTo(\App\Product::class);
+    }
 }

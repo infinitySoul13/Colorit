@@ -1,5 +1,5 @@
 const state = {
-    items: [],
+    items: JSON.parse(localStorage.getItem('cart')) || [],
 }
 
 // getters
@@ -17,7 +17,12 @@ const getters = {
     cartTotalPrice: (state, getters) => {
         let summ = 0;
         state.items.forEach((item)=>{
-            summ+=item.product.price*item.quantity
+            if (item.product.type == 'sale') {
+                summ+=item.product.discount_price*item.quantity
+            }
+            else {
+                summ+=item.product.price*item.quantity
+            }
         });
         return summ
     }
@@ -31,14 +36,14 @@ const actions = {
     addProductToCart({state, commit}, product) {
         commit('pushProductToCart', product);
     },
-    incQuantity({state, commit}, id) {
-        commit('incrementItemQuantity', id);
+    incQuantity({state, commit}, product) {
+        commit('incrementItemQuantity', product);
     },
-    decQuantity({state, commit}, id) {
-        commit('decrementItemQuantity', id);
+    decQuantity({state, commit}, product) {
+        commit('decrementItemQuantity', product);
     },
-    removeProduct({state, commit}, id) {
-        commit('removeItem', id);
+    removeCartProduct({state, commit}, product) {
+        commit('removeItem', product);
     },
     clearCart({state, commit}) {
         commit('clearAllItems');
@@ -48,34 +53,76 @@ const actions = {
 // mutations
 const mutations = {
     pushProductToCart(state, product) {
-        const cartItem = state.items.find(item => item.product.id === product.id)
-        if (!cartItem)
+        const cartItem = state.items.find(item => {
+            if (item.product.id === product.product.id){
+                if(item.size == product.size && item.color == product.color)
+                {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if (!cartItem) {
             state.items.push({
-                product,
-                quantity: 1
-            })
-        else
-            cartItem.quantity++;
+                product: product.product,
+                color: product.color,
+                size: product.size,
+                quantity: product.quantity
+            });
+        }
+        else {
+            cartItem.quantity = Number(cartItem.quantity)+Number(product.quantity);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(state.items));
     },
 
-    incrementItemQuantity(state, id) {
-        const cartItem = state.items.find(item => item.product.id === id)
-        cartItem.quantity++
+    incrementItemQuantity(state, product) {
+        const cartItem = state.items.find(item => {
+            if (item.product.id === product.product.id){
+                if(item.size == product.size && item.color == product.color)
+                {
+                    return true;
+                }
+            }
+            return false;
+        });
+        cartItem.quantity++;
+        localStorage.setItem('cart', JSON.stringify(state.items));
     },
 
-    decrementItemQuantity(state, id) {
-        const cartItem = state.items.find(item => item.product.id === id)
+    decrementItemQuantity(state, product) {
+        const cartItem = state.items.find(item => {
+            if (item.product.id === product.product.id){
+                if(item.size == product.size && item.color == product.color)
+                {
+                    return true;
+                }
+            }
+            return false;
+        });
         if (cartItem.quantity > 1)
             cartItem.quantity--;
+        localStorage.setItem('cart', JSON.stringify(state.items));
     },
-    removeItem(state, id) {
-        let tmp = state.items.filter((item) => item.product.id !== id);
-        state.items = tmp
+    removeItem(state, product) {
+        let tmp = state.items.filter((item) =>{
+            if (item.product.id === product.product.id){
+                if(item.size === product.size && item.color === product.color)
+                {
+                    return false;
+                }
+            }
+            return true;
+        });
+        state.items = tmp;
+        localStorage.setItem('cart', JSON.stringify(state.items));
         //commit('setCartItems',tmp)
     },
 
     clearAllItems(state) {
-        state.items = []
+        state.items = [];
+        localStorage.setItem('cart', JSON.stringify(state.items));
         //commit('setCartItems',tmp)
     },
     setCartItems(state, {items}) {
