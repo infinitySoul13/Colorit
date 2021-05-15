@@ -120,7 +120,10 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .custom-select option {
+        color: black !important;
+    }
     input[type="file"]{
         opacity: 0;
         width: 100%;

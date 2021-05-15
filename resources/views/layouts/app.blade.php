@@ -7,8 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'COLORIT') }}</title>
-    <link rel="shortcut icon" href="{{asset('assets/images/red2.png')}}" type="image/png">
+    <title>COLORIT</title>
+    <link rel="shortcut icon" href="{{asset('img/icon.png')}}" type="image/png">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
@@ -39,7 +39,6 @@
                 <ul class="navbar-nav mr-auto">
 
                     @auth
-
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.index') }}">Products</a>

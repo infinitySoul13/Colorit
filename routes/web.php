@@ -12,8 +12,10 @@
 */
 
 use App\Http\Middleware\IsAdmin;
+use Illuminate\Http\Response;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 
@@ -33,6 +35,14 @@ Route::get('/shop', function () {
 Route::get('/cart', function () {
     $products = \App\Product::all();
     return view('main.cart', compact('products'));
+});
+
+Route::get("/storage/products/{name}",function ($name){
+
+    $file = Storage::disk('local')->get("public/products/$name");
+    return (new Response($file, 200))
+        ->header('Content-Type', 'image/jpeg');
+
 });
 
 Route::match(['get', 'post'], '/botman', 'BotManController@handle');

@@ -12,7 +12,7 @@
     <!-- Page Title -->
     <title>COLORIT</title>
     <!-- Favicon Icon -->
-{{--    <link rel="shortcut icon" href="{{asset('assets/images/red2.png')}}" type="image/png">--}}
+    <link rel="shortcut icon" href="{{asset('img/icon.png')}}" type="image/png">
     <!-- All css here -->
     <link href="https://fonts.googleapis.com/css?family=Russo+One&display=swap&subset=cyrillic" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,800&display=swap" rel="stylesheet">
