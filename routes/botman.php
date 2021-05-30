@@ -324,8 +324,7 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
         $attachment = new Image('https://colorit-it.herokuapp.com'.$image['path'], [
             'custom_payload' => true,
         ]);
-        $message = OutgoingMessage::create("*".$product->title."*\n" .
-            "_".$product->description."_")
+        $message = OutgoingMessage::create("*".$product->title."*\n")
             ->withAttachment($attachment);
 
         $bot->reply($message, ["parse_mode" => "Markdown"]);
@@ -348,12 +347,10 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
             [
                 ['text' => 'To product', 'callback_data' => "/product_info $productId"],
             ],
-            [
-                ['text' => 'Back', 'callback_data' => "/product_photos $page"],
-                ['text' => 'Next', 'callback_data' => "/product_photos $page"],
-            ],
-
-
+//            [
+//                ['text' => 'Back', 'callback_data' => "/product_photos $page $productId"],
+//                ['text' => 'Next', 'callback_data' => "/product_photos $page $productId"],
+//            ],
         ]
     ];
     $bot->sendRequest("sendMessage",
@@ -364,33 +361,38 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
             'reply_markup' => json_encode($keyboard)
         ]);
 });
-function reviews($bot, $page)
+function reviews($bot, $productId)
 {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
-    $reviews = \App\Review::skip($page * 10)
-        ->take(10)
-        ->orderBy('id', 'desc')
-        ->get();
-
+//    $reviews = \App\Review::skip($page * 10)
+//        ->take(10)
+//        ->orderBy('id', 'desc')
+//        ->get();
+$product = Product::with(['reviews'])->find($productId);
     $keyboard = [];
-
+    $reviews = $product->reviews;
+    if (count($reviews)==0)
+    {
+        $bot->reply('This product does not have reviews yet');
+        return;
+    }
     foreach ($reviews as $key => $review) {
 
-        if (count($reviews) - 1 == $key && $page == 0 && count($reviews) == 10)
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/reviews " . ($page + 1)]
-            ]);
-        if (count($reviews) - 1 == $key && $page != 0 && count($reviews) == 10)
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/reviews " . ($page - 1)],
-                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/reviews " . ($page + 1)]
-            ]);
-        if (count($reviews) - 1 == $key && $page != 0 && count($reviews) < 10)
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/reviews " . ($page - 1)],
-            ]);
+//        if (count($reviews) - 1 == $key && $page == 0 && count($reviews) == 10)
+//            array_push($keyboard, [
+//                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/reviews " . ($page + 1)]
+//            ]);
+//        if (count($reviews) - 1 == $key && $page != 0 && count($reviews) == 10)
+//            array_push($keyboard, [
+//                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/reviews " . ($page - 1)],
+//                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/reviews " . ($page + 1)]
+//            ]);
+//        if (count($reviews) - 1 == $key && $page != 0 && count($reviews) < 10)
+//            array_push($keyboard, [
+//                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/reviews " . ($page - 1)],
+//            ]);
 
         $bot->sendRequest("sendMessage",
             [
@@ -477,8 +479,8 @@ function productList($bot, $page, $catId)
 $botman->hears('.*Reviews', function ($bot) {
     reviews($bot, 0);
 });
-$botman->hears('/reviews ([0-9]+)', function ($bot, $page) {
-    reviews($bot, $page);
+$botman->hears('/reviews ([0-9]+)', function ($bot, $productId) {
+    reviews($bot, $productId);
 });
 
 /*Cart*/
