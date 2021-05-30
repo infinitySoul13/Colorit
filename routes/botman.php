@@ -81,7 +81,7 @@ function aboutMenu($bot, $message)
     ];
     $bot->sendRequest("sendMessage",
         [
-            "chat_id" => "$id",
+            "chat_id" => $id,
             "text" => $message,
             "parse_mode" => "Markdown",
             "disable_notification"=>true,
@@ -106,7 +106,8 @@ $botman->hears(".*About us", function ($bot) {
     );
 });
 $botman->hears(".*Contacts", function ($bot) {
-
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
     $keyboard = [
         'inline_keyboard' => [
             [
@@ -122,6 +123,7 @@ $botman->hears(".*Contacts", function ($bot) {
     ];
     $bot->sendRequest("sendMessage",
         [
+            "chat_id" => "$id",
             "text" => 'Do you have any questions? - Go to our website and get answers!',
             "disable_notification"=>true,
             'reply_markup' => json_encode($keyboard)
@@ -136,7 +138,7 @@ $botman->hears("Products", function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
-    foreach ($categories as $key=>$category) {
+    foreach ($categories as $category) {
 //        $bot->sendRequest("sendPhoto",
 //            [
 //                "chat_id" => "$id",
@@ -153,13 +155,14 @@ $botman->hears("Products", function ($bot) {
 //            ]);
         $bot->sendRequest("sendMessage",
             [
+                "chat_id" => "$id",
                 "text" => $category->title,
                 "disable_notification"=>true,
                 "parse_mode" => "Markdown",
                 'reply_markup' => json_encode([
                     'inline_keyboard' => [
                         [
-                            ["text" => "\xF0\x9F\x91\x89More", "callback_data" => "/category 0 $key"]
+                            ["text" => "\xF0\x9F\x91\x89More", "callback_data" => "/category 0 $category->title"]
                         ]
                     ],
                 ])
@@ -167,7 +170,7 @@ $botman->hears("Products", function ($bot) {
     }
 
 });
-$botman->hears('/category ([0-9]+) ([0-9]+)', function ($bot, $page, $catIndex) {
+$botman->hears('/category ([0-9]+) ([а-яА-Яa-zA-Z0-9]+)', function ($bot, $page, $cat) {
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
@@ -175,7 +178,7 @@ $botman->hears('/category ([0-9]+) ([0-9]+)', function ($bot, $page, $catIndex) 
 //    $categories = \App\Product::all()->unique('category');
     $categories = \App\Category::all();
 
-    $products = \App\Product::where("category", $categories[$catIndex]->title)
+    $products = \App\Product::where("category", $cat)
         ->where("quantity",">","0")
         ->take(10)
         ->skip($page * 10)
@@ -196,18 +199,18 @@ $botman->hears('/category ([0-9]+) ([0-9]+)', function ($bot, $page, $catIndex) 
 
         if (count($products) - 1 == $key && $page == 0 && count($products) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $catIndex]
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $cat]
             ]);
 
         if (count($products) - 1 == $key && $page != 0 && count($products) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $catIndex],
-                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $catIndex]
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $cat],
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $cat]
             ]);
 
         if (count($products) - 1 == $key && $page != 0 && count($products) < 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $catIndex],
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $cat],
             ]);
 
         $bot->sendRequest("sendPhoto",
@@ -295,6 +298,7 @@ $botman->hears('/product_info ([0-9]+)', function ($bot, $productId) {
 //        ]);
     $bot->sendRequest("sendMessage",
         [
+            "chat_id" => "$id",
             "text" => $message,
             "disable_notification"=>true,
             'reply_markup' => json_encode([
@@ -307,7 +311,8 @@ $botman->hears("/products ([0-9]+) ([а-яА-Яa-zA-Z0-9]+)", function ($bot, $p
     productList($bot, $page, $catId);
 });
 $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $productId) {
-
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
     $product = Product::find($productId);
     foreach ($product->src as $image) {
         $attachment = new Image('http//colorit-it.herokuapp.com'.$image['path'], [
@@ -347,6 +352,7 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
     ];
     $bot->sendRequest("sendMessage",
         [
+            "chat_id" => "$id",
             "text" => 'Your actions',
             "disable_notification"=>true,
             'reply_markup' => json_encode($keyboard)
@@ -382,6 +388,7 @@ function reviews($bot, $page)
 
         $bot->sendRequest("sendMessage",
             [
+                "chat_id" => "$id",
                 "text" => "*" . $review->name . "*\n"
                     . "_" . $review->message . "_\n",
                 "parse_mode" => "Markdown",
@@ -646,47 +653,47 @@ $botman->hears('/do_order|Checkout.*', BotManController::class . "@orderConversa
 /*Service*/
 $botman->hears('.*Make an order.*', function ($bot) {
     $text = 'Welcome! Here you can make an order. Choose the service that our typography provide.';
-            $inline_keyboard=[
-                [
-                    ["text" => "Business cards", "callback_data" => "/size Business_cards 200"],
-                    ["text" => "Leaflets", "callback_data" => "/size Leaflets 150"],
-                    ["text" => "Forms", "callback_data" => "/size Forms 120 "]
-                ],
-                [
-                    ["text" => "Booklets", "callback_data" => "/size Booklets 250 "],
-                    ["text" => "Stickers on paper", "callback_data" => "/size Stickers_on_paper 120"]
-                ],
-                [
-                    ["text" => "Plastic cards", "callback_data" => "/size Plastic_cards 300"],
-                    ["text" => "Drawings", "callback_data" => "/size Drawings 270"]
-                ],
-                [
-                    ["text" => "Pavement signs", "callback_data" => "/size Pavement_signs 130"],
-                    ["text" => "Banners", "callback_data" => "/size Banners 400"]
-                ],
-                [
-                    ["text" => "Acrylic plates", "callback_data" => "/size Acrylic_plates 500"],
-                    ["text" => "Stickers on tape", "callback_data" => "/size Stickers_on_tape 180"]
-                ],
-                [
-                    ["text" => "PVC plates", "callback_data" => "/size PVC_plates 260"],
-                    ["text" => "Stencils", "callback_data" => "/size Stencils 210"]
-                ]
-            ];
-            $bot->userStorage()->save([
-                'new_order_total' => 0
-            ]);
-            $telegramUser = $bot->getUser();
-            $id = $telegramUser->getId();
-            $this->bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => "$id",
-                    "text" => $text,
-                    "parse_mode" => "Markdown",
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' => $inline_keyboard
-                    ])
-                ]);
+    $inline_keyboard=[
+        [
+            ["text" => "Business cards", "callback_data" => "/size Business_cards 200"],
+            ["text" => "Leaflets", "callback_data" => "/size Leaflets 150"],
+            ["text" => "Forms", "callback_data" => "/size Forms 120 "]
+        ],
+        [
+            ["text" => "Booklets", "callback_data" => "/size Booklets 250 "],
+            ["text" => "Stickers on paper", "callback_data" => "/size Stickers_on_paper 120"]
+        ],
+        [
+            ["text" => "Plastic cards", "callback_data" => "/size Plastic_cards 300"],
+            ["text" => "Drawings", "callback_data" => "/size Drawings 270"]
+        ],
+        [
+            ["text" => "Pavement signs", "callback_data" => "/size Pavement_signs 130"],
+            ["text" => "Banners", "callback_data" => "/size Banners 400"]
+        ],
+        [
+            ["text" => "Acrylic plates", "callback_data" => "/size Acrylic_plates 500"],
+            ["text" => "Stickers on tape", "callback_data" => "/size Stickers_on_tape 180"]
+        ],
+        [
+            ["text" => "PVC plates", "callback_data" => "/size PVC_plates 260"],
+            ["text" => "Stencils", "callback_data" => "/size Stencils 210"]
+        ]
+    ];
+    $bot->userStorage()->save([
+        'new_order_total' => 0
+    ]);
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
 });
 $botman->hears('/size ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $service, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
@@ -726,7 +733,7 @@ $botman->hears('/size ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $servi
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -771,7 +778,7 @@ $botman->hears('/material ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $s
     ];
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -807,7 +814,7 @@ $botman->hears('/cover_ofset ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot,
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -838,7 +845,7 @@ $botman->hears('/cover ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $cove
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -881,7 +888,7 @@ $botman->hears('/processing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, 
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -923,7 +930,7 @@ $botman->hears('/printing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $p
     ];
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -959,7 +966,7 @@ $botman->hears('/quantity ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $p
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -989,7 +996,7 @@ $botman->hears('/period ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $qua
     ];
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $this->bot->sendRequest("sendMessage",
+    $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
@@ -1015,7 +1022,7 @@ $botman->hears('/period ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $qua
 //
 //    $telegramUser = $bot->getUser();
 //    $id = $telegramUser->getId();
-//    $this->bot->sendRequest("sendMessage",
+//    $bot->sendRequest("sendMessage",
 //        [
 //            "chat_id" => "$id",
 //            "text" => $text,
