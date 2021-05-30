@@ -138,7 +138,7 @@ $botman->hears("Products", function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
-    foreach ($categories as $category) {
+    foreach ($categories as $key=>$category) {
 //        $bot->sendRequest("sendPhoto",
 //            [
 //                "chat_id" => "$id",
@@ -170,10 +170,11 @@ $botman->hears("Products", function ($bot) {
     }
 
 });
-$botman->hears('/category ([0-9]+) {cat}', function ($bot, $page, $cat) {
+$botman->hears('/category {page} {cat}', function ($bot, $page, $cat) {
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
+    $page = intval($page);
 
 //    $categories = \App\Product::all()->unique('category');
 //    $categories = \App\Category::all();
@@ -185,7 +186,7 @@ $botman->hears('/category ([0-9]+) {cat}', function ($bot, $page, $cat) {
         ->get();
 
     if (count($products) == 0) {
-        $bot->reply("No products found in this category");
+        $bot->reply("No products found in this category $cat");
         return;
     }
 
@@ -212,12 +213,16 @@ $botman->hears('/category ([0-9]+) {cat}', function ($bot, $page, $cat) {
             array_push($keyboard, [
                 ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category " . ($page - 1) . " " . $cat],
             ]);
-
+        $photo ='https://colorit-it.herokuapp.com/img/2colorit.png';
+        if($product->src[0]['path'])
+        {
+            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
+        }
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
                 "caption" => $product->title,
-                "photo" => 'https://colorit-it.herokuapp.com'.$product->src[0]['path'],
+                "photo" => $photo,
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
@@ -538,11 +543,16 @@ $botman->hears('.*Cart.*', function ($bot) {
         }
         $text = "".$product->title."\n"
             ."Quantity:".$product->number." ";
+        $photo ='https://colorit-it.herokuapp.com/img/2colorit.png';
+        if($product->src[0]['path'])
+        {
+            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
+        }
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
                 "caption" => $text,
-                "photo" => 'https://colorit-it.herokuapp.com'.$product->src[0]['path'],
+                "photo" =>  $photo ,
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
@@ -940,7 +950,7 @@ $botman->hears('/printing {processing} ([0-9]+)', function ($bot, $processing, $
             ])
         ]);
 });
-$botman->hears('/quantity {quantity} ([0-9]+)', function ($bot, $printing, $price) {
+$botman->hears('/quantity {printing} ([0-9]+)', function ($bot, $printing, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -976,7 +986,7 @@ $botman->hears('/quantity {quantity} ([0-9]+)', function ($bot, $printing, $pric
             ])
         ]);
 });
-$botman->hears('/period {period} ([0-9]+)', function ($bot, $quantity, $price) {
+$botman->hears('/period {quantity} ([0-9]+)', function ($bot, $quantity, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -1029,7 +1039,32 @@ $botman->hears('/period {period} ([0-9]+)', function ($bot, $quantity, $price) {
 //            "parse_mode" => "Markdown",
 //        ]);
 //});
+$botman->hears('/send_an_order|Send an order*', function ($bot) {
+    $text = "* New order *: \n"
+        . "* Service *:". $bot->userStorage()->get("service"). "\n"
+        . "*The size*:" . $bot->userStorage()->get("size"). "\n"
+        . "* Material *:". $bot->userStorage()->get("material"). "\n"
+        . "* Offset *:". $bot->userStorage()->get("cover_ofset"). "\n"
+        . "* Coverage *:". $bot->userStorage()->get("cover"). "\n"
+        . "* Post-processing *:". $bot->userStorage()->get("processing"). "\n"
+        . "* Print *:". $bot->userStorage()->get("printing"). "\n"
+        . "* Number of copies *:". $bot->userStorage()->get("quantity"). "\n"
+        . "* Printing time *:".$bot->userStorage()->get("period"). "\n"
+        . "* Amount to be paid *:". $bot->userStorage()->get("new_order_total")." £ \n"
+        . "*Order date*:" . (Carbon :: now ('+ 3:00'));
 
+    try {
+        Telegram::sendMessage([
+            'chat_id' => env("CHANNEL_ID"),
+            'parse_mode' => 'HTML',
+            'text' => $text,
+            'disable_notification' => 'false'
+        ]);
+    } catch (\Exception $e) {
+        Log::info("Error sending order to channel!");
+    }
+    mainMenu($bot,"Your order have been sent successfully");
+});
 $botman->hears('/make_an_order {period} ([0-9]+)', function ($bot, $period, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
@@ -1059,32 +1094,7 @@ $botman->hears('/make_an_order {period} ([0-9]+)', function ($bot, $period, $pri
             "parse_mode" => "HTML",
         ]);
 });
-$botman->hears('/send_an_order|Send an order', function ($bot) {
-    $text = "* New order *: \n"
-        . "* Service *:". $bot->userStorage()->get("service"). "\n"
-        . "*The size*:" . $bot->userStorage()->get("size"). "\n"
-        . "* Material *:". $bot->userStorage()->get("material"). "\n"
-        . "* Offset *:". $bot->userStorage()->get("cover_ofset"). "\n"
-        . "* Coverage *:". $bot->userStorage()->get("cover"). "\n"
-        . "* Post-processing *:". $bot->userStorage()->get("processing"). "\n"
-        . "* Print *:". $bot->userStorage()->get("printing"). "\n"
-        . "* Number of copies *:". $bot->userStorage()->get("quantity"). "\n"
-        . "* Printing time *:".$bot->userStorage()->get("period"). "\n"
-        . "* Amount to be paid *:". $bot->userStorage()->get("new_order_total")." £ \n"
-        . "*Order date*:" . (Carbon :: now ('+ 3:00'));
 
-    try {
-        Telegram::sendMessage([
-            'chat_id' => env("CHANNEL_ID"),
-            'parse_mode' => 'HTML',
-            'text' => $text,
-            'disable_notification' => 'false'
-        ]);
-    } catch (\Exception $e) {
-        Log::info("Error sending order to channel!");
-    }
-    mainMenu($bot,"Your order have been sent successfully");
-});
 
 function serviceOrderMenu($bot,$message)
 {
@@ -1092,7 +1102,7 @@ function serviceOrderMenu($bot,$message)
     $id = $telegramUser->getId();
 
     $keyboard = [
-        ["Main menu"]
+        ["Main menu"],
         ["Send an order"],
         ["Remove order"],
     ];
