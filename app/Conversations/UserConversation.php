@@ -47,11 +47,10 @@ class UserConversation extends Conversation
         }
 
         $keyboard = [
-            ["Товары"],
-            ["Корзина" . ($count == null ? "(0₽)" : "(" . $count . "₽)")],
-            ["Запрос по VIN"],
-            ["Заказ уникального товара"],
-            ["О Нас"],
+            ["Products"],
+            ["Cart" . ($count == null ? "(0₽)" : "(" . $count . "₽)")],
+            ["Make an order"],
+            ["About us"],
         ];
 
 
@@ -69,8 +68,8 @@ class UserConversation extends Conversation
     }
     public function askPhone()
     {
-        $question = Question::create('Скажите мне свой номер телефона в формате "+38 (000) 000-00-00"')
-            ->fallback('Спасибо что пообщались со мной:)!');
+        $question = Question::create('Tell me your phone number in the format "+38 (000) 000-00-00"')
+            ->fallback('Thank you for chatting with me:)!');
 
         $this->ask($question, function (Answer $answer) {
 //            $vowels = array("(", ")", "-", " ");
@@ -93,7 +92,7 @@ class UserConversation extends Conversation
             if ($validator->fails()) {
                 Log::info("phone2=$tmp_phone");
 
-                $this->bot->reply("Номер введен не верно...\n");
+                $this->bot->reply("Phone number entered incorrectly...\n");
                 $this->askPhone();
 //                return;
             } else {
@@ -125,25 +124,22 @@ class UserConversation extends Conversation
 //                    {
 //                        $this->askName();
 //                    }
-                    $this->mainMenu("Мы с Вами уже знакомы. Теперь данные бота и сайта синхронизированы");
+                    $this->mainMenu("We are already familiar with you.");
                 }
-
-//                $this->askVincode();
 
             }
 
         });
     }
     public function askName() {
-        $question = Question::create('Скажите мне своё имя')
-            ->fallback('Спасибо, что пообщались со мной:)!');
+        $question = Question::create('Tell me your name')
+            ->fallback('Thank you for chatting with me:)!');
 
         $this->ask($question, function (Answer $answer) {
             $this->name = $answer->getText();
             $this->user->name = $this->name;
             $this->user->save();
-            $this->mainMenu("Теперь мы с Вами знакомы. Добро пожаловать в бот магазина АВТОДОНа");
-//            $this->askVincode();
+            $this->mainMenu("Now we are familiar with you. Welcome to the ColorIt store bot");
         });
     }
     /**
@@ -151,7 +147,7 @@ class UserConversation extends Conversation
      */
     public function run()
     {
-        $this->say('Прежде, чем начать, давайте познакомимся.');
+        $this->say("Before we start, let's get to know each other.");
         $this->askPhone();
     }
 }

@@ -4,6 +4,8 @@ use App\Http\Controllers\BotManController;
 use App\Product;
 use App\User;
 use BotMan\BotMan\BotMan;
+use BotMan\BotMan\Messages\Attachments\Image;
+use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -29,7 +31,7 @@ function createUser($bot)
 
     }
     else {
-        mainMenu($bot, 'Главное меню');
+        mainMenu($bot, 'Main menu');
         return $user;
     }
 
@@ -51,12 +53,10 @@ function mainMenu($bot, $message)
     }
 
     $keyboard = [
-        ["Товары"],
-        ["Корзина" . ($count == null ? "(0₽)" : "(" . $count . "₽)")],
-        ["Сделать заказ"],
-//        ["Заказ уникального товара"],
-//      ["Настройки"],
-        ["О Нас"],
+        ["Products"],
+        ["Cart" . ($count == null ? "(0£)" : "(" . $count . "£)")],
+        ["Make an order"],
+        ["About us"],
     ];
     $bot->sendRequest("sendMessage",
         [
@@ -76,8 +76,8 @@ function aboutMenu($bot, $message)
     $id = $telegramUser->getId();
 
     $keyboard = [
-        ["Контакты"],
-        ["Главное меню"],
+        ["Contacts"],
+        ["Main menu"],
     ];
     $bot->sendRequest("sendMessage",
         [
@@ -92,61 +92,74 @@ function aboutMenu($bot, $message)
             ])
         ]);
 }
-$botman->hears('/start|Главное меню', function ($bot) {
+$botman->hears('/start|Main menu', function ($bot) {
 //    createUser($bot);
-    mainMenu($bot, 'Главное меню');
+    mainMenu($bot, 'Main menu');
 })->stopsConversation();
 $botman->hears('/stop', function ($bot) {
-    mainMenu($bot, 'Главное меню');
+    mainMenu($bot, 'Main menu');
 })->stopsConversation();
-$botman->hears(".*О нас", function ($bot) {
-    aboutMenu($bot, "*Наши контакты*\n"
-        . "*Телефон*: _+7 (000) 000 00 00_\n"
-        . "*Почта*: _colorit@gmail.com_\n"
+$botman->hears(".*About us", function ($bot) {
+    aboutMenu($bot, "*Our contacts*\n"
+        . "*Phone*: _+7 (000) 000 00 00_\n"
+        . "*Email*: _colorit@gmail.com_\n"
     );
 });
-$botman->hears(".*Контакты", function ($bot) {
+$botman->hears(".*Contacts", function ($bot) {
 
     $keyboard = [
         'inline_keyboard' => [
             [
-                ['text' => 'Мы в Instagram', 'url' => 'https://www.instagram.com/'],
+                ['text' => 'We are in Instagram', 'url' => 'https://www.instagram.com/'],
             ],
             [
-                ['text' => 'Мы в Вконтакте', 'url' => 'https://vk.com/'],
+                ['text' => 'We are in Вконтакте', 'url' => 'https://vk.com/'],
             ],
             [
-                ['text' => 'Наш сайт', 'url' => 'http://colorit.ru/'],
+                ['text' => 'Our website', 'url' => 'http://colorit-it.herokuapp.com/'],
             ]
         ]
     ];
     $bot->sendRequest("sendMessage",
         [
-            "text" => 'Возникли вопросы? - Переходите на наш сайт и получите ответы!',
+            "text" => 'Do you have any questions? - Go to our website and get answers!',
             "disable_notification"=>true,
             'reply_markup' => json_encode($keyboard)
         ]);
 });
-$botman->hears('Сделать заказ', BotManController::class . "@serviceOrderConversation");
+//$botman->hears('Make an order', BotManController::class . "@serviceOrderConversation");
 
 /*Товары*/
-$botman->hears("Товары", function ($bot) {
-    $categories = \App\Product::all()->unique('category');
-
+$botman->hears("Products", function ($bot) {
+//    $categories = \App\Product::all()->unique('category');
+    $categories = \App\Category::all();
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
-    foreach ($categories as $key => $category) {
-        $bot->sendRequest("sendPhoto",
+    foreach ($categories as $key=>$category) {
+//        $bot->sendRequest("sendPhoto",
+//            [
+//                "chat_id" => "$id",
+//                "caption" => $category->title,
+//                "photo" => 'https://ld-magento-72.template-help.com/magento_62000/pub/media/catalog/category/cat_3_lt_5.jpg',
+//                "parse_mode" => "Markdown",
+//                'reply_markup' => json_encode([
+//                    'inline_keyboard' => [
+//                        [
+//                            ["text" => "\xF0\x9F\x91\x89More", "callback_data" => "/category 0 $key"]
+//                        ]
+//                    ],
+//                ])
+//            ]);
+        $bot->sendRequest("sendMessage",
             [
-                "chat_id" => "$id",
-                "caption" => $category->category,
-                "photo" => 'https://ld-magento-72.template-help.com/magento_62000/pub/media/catalog/category/cat_3_lt_5.jpg',
+                "text" => $category->title,
+                "disable_notification"=>true,
                 "parse_mode" => "Markdown",
                 'reply_markup' => json_encode([
                     'inline_keyboard' => [
                         [
-                            ["text" => "\xF0\x9F\x91\x89Детальнее", "callback_data" => "/category 0 $key"]
+                            ["text" => "\xF0\x9F\x91\x89More", "callback_data" => "/category 0 $key"]
                         ]
                     ],
                 ])
@@ -159,49 +172,49 @@ $botman->hears('/category ([0-9]+) ([0-9]+)', function ($bot, $page, $catIndex) 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
-    $categories = \App\Product::all()->unique('category');
+//    $categories = \App\Product::all()->unique('category');
+    $categories = \App\Category::all();
 
-    $products = \App\Product::where("category", $categories[$catIndex]->category)
+    $products = \App\Product::where("category", $categories[$catIndex]->title)
         ->where("quantity",">","0")
         ->take(10)
         ->skip($page * 10)
         ->get();
 
     if (count($products) == 0) {
-        $bot->reply("Товары в категории не найдены");
+        $bot->reply("No products found in this category");
         return;
     }
 
     foreach ($products as $key => $product) {
         $keyboard = [
             [
-                ['text' => "\xF0\x9F\x91\x89Детальнее", 'callback_data' => "/product_info " . $product->id],
-                ['text' => "\xE2\x86\xAAВ корзину(" . $product->price . "₽)", 'callback_data' => "/add_to_basket " . $product->id]
+                ['text' => "\xF0\x9F\x91\x89More", 'callback_data' => "/product_info " . $product->id],
+                ['text' => "\xE2\x86\xAATo cart(" . $product->price . "£)", 'callback_data' => "/add_to_basket " . $product->id]
             ],
-
         ];
 
         if (count($products) - 1 == $key && $page == 0 && count($products) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/category  " . ($page + 1) . " " . $catIndex]
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $catIndex]
             ]);
 
         if (count($products) - 1 == $key && $page != 0 && count($products) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/category  " . ($page - 1) . " " . $catIndex],
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/category  " . ($page + 1) . " " . $catIndex]
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $catIndex],
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $catIndex]
             ]);
 
         if (count($products) - 1 == $key && $page != 0 && count($products) < 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/category  " . ($page - 1) . " " . $catIndex],
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $catIndex],
             ]);
 
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
                 "caption" => $product->title,
-                "photo" => 'https://ld-magento-72.template-help.com/magento_62000/pub/media/catalog/category/cat_3_lt_5.jpg',
+                "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]['path'],
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
@@ -219,12 +232,12 @@ $botman->hears('/category ([0-9]+) ([0-9]+)', function ($bot, $page, $catIndex) 
 //    $message = "*" . $product->title . "*\n"
 //        . "*Описание:*" . $product->description . "\n"
 ////        . "*Производитель*:" . $product->brand . "\n"
-//        . "*Цена*:" . $product->price . "₽\n";
+//        . "*Цена*:" . $product->price . "£\n";
 //
 //
 //    $keyboard = [
 //        [
-//            ['text' => "\xE2\x86\xAAВ корзину(" . $product->price . "₽)", 'callback_data' => "/add_to_basket " . $product->id]
+//            ['text' => "\xE2\x86\xAATo cart(" . $product->price . "£)", 'callback_data' => "/add_to_basket " . $product->id]
 //        ]
 //    ];
 //
@@ -247,27 +260,42 @@ $botman->hears('/product_info ([0-9]+)', function ($bot, $productId) {
     $product = \App\Product::find($productId);
     $message = "*" . $product->title . "*\n"
         . "_" . $product->description . "_\n"
-        . "*Тип*:" . $product->type . "\n"
-        . "*Категория*:" . $product->category . "\n"
-        . "*Цена*:" . $product->price . "₽\n";
+        . "*Type*:" . $product->type . "\n"
+        . "*Category*:" . $product->category . "\n";
+//    if($product->type == 'sale')
+//    {
+//        $message .= "*Price*:" . $product->discount_price . "£\n";
+//    }
+//    else {
+        $message .= "*Price*:" . $product->price . "£\n";
+//    }
+
 
     $keyboard = [
         [
-
-            ['text' => "\xE2\x86\xAAВ корзину(" . $product->price . "₽)", 'callback_data' => "/add_to_basket " . $product->id],
-            ['text' => "Отзывы", 'callback_data' => "/product_reviews " . $product->id],
+            ['text' => "\xE2\x86\xAATo cart(" . $product->price . "£)", 'callback_data' => "/add_to_basket " . $product->id],
+            ['text' => "Reviews", 'callback_data' => "/product_reviews " . $product->id],
         ]
     ];
 
     if (count($product->src) > 1) {
-        array_push($keyboard, [['text' => "\xE2\x9C\xA8Больше фотографий", 'callback_data' => "/product_photos 0 " . $product->id]]);
+        array_push($keyboard, [['text' => "\xE2\x9C\xA8More photos", 'callback_data' => "/product_photos 0 " . $product->id]]);
     }
-    $bot->sendRequest("sendPhoto",
+//    $bot->sendRequest("sendPhoto",
+//        [
+//            "chat_id" => "$id",
+//            "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]['path'],
+//            "caption" => $message,
+//            "parse_mode" => "Markdown",
+//            "disable_notification"=>true,
+//            'reply_markup' => json_encode([
+//                'inline_keyboard' =>
+//                    $keyboard
+//            ])
+//        ]);
+    $bot->sendRequest("sendMessage",
         [
-            "chat_id" => "$id",
-            "photo" => env("APP_URL_IMAGES") . $product->src[0]["name"],
-            "caption" => $message,
-            "parse_mode" => "Markdown",
+            "text" => $message,
             "disable_notification"=>true,
             'reply_markup' => json_encode([
                 'inline_keyboard' =>
@@ -278,29 +306,40 @@ $botman->hears('/product_info ([0-9]+)', function ($bot, $productId) {
 $botman->hears("/products ([0-9]+) ([а-яА-Яa-zA-Z0-9]+)", function ($bot, $page, $catId) {
     productList($bot, $page, $catId);
 });
-$botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $producId) {
+$botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $productId) {
 
-    for ($i = 0; $i < 5; $i++) {
-        $attachment = new Image('http://www.vintec.co.rs/admin/content/image5.jpg', [
+    $product = Product::find($productId);
+    foreach ($product->src as $image) {
+        $attachment = new Image('http//colorit-it.herokuapp.com'.$image['path'], [
             'custom_payload' => true,
         ]);
-
-// Build message object
-        $message = OutgoingMessage::create("*Название товара*\n" .
-            "_Краткое описание товара_")
+        $message = OutgoingMessage::create("*".$product->title."*\n" .
+            "_".$product->description."_")
             ->withAttachment($attachment);
 
         $bot->reply($message, ["parse_mode" => "Markdown"]);
     }
+//    for ($i = 0; $i < 5; $i++) {
+//        $attachment = new Image('http://www.vintec.co.rs/admin/content/image5.jpg', [
+//            'custom_payload' => true,
+//        ]);
+//
+//// Build message object
+//        $message = OutgoingMessage::create("*Название товара*\n" .
+//            "_Краткое описание товара_")
+//            ->withAttachment($attachment);
+//
+//        $bot->reply($message, ["parse_mode" => "Markdown"]);
+//    }
 
     $keyboard = [
         'inline_keyboard' => [
             [
-                ['text' => 'К товару', 'callback_data' => "/product_info $producId"],
+                ['text' => 'To product', 'callback_data' => "/product_info $productId"],
             ],
             [
-                ['text' => 'Назад', 'callback_data' => "/product_photos $page"],
-                ['text' => 'Дальше', 'callback_data' => "/product_photos $page"],
+                ['text' => 'Back', 'callback_data' => "/product_photos $page"],
+                ['text' => 'Next', 'callback_data' => "/product_photos $page"],
             ],
 
 
@@ -308,7 +347,7 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
     ];
     $bot->sendRequest("sendMessage",
         [
-            "text" => 'Ваши действия',
+            "text" => 'Your actions',
             "disable_notification"=>true,
             'reply_markup' => json_encode($keyboard)
         ]);
@@ -329,31 +368,28 @@ function reviews($bot, $page)
 
         if (count($reviews) - 1 == $key && $page == 0 && count($reviews) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/reviews " . ($page + 1)]
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/reviews " . ($page + 1)]
             ]);
         if (count($reviews) - 1 == $key && $page != 0 && count($reviews) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/reviews " . ($page - 1)],
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/reviews " . ($page + 1)]
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/reviews " . ($page - 1)],
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/reviews " . ($page + 1)]
             ]);
         if (count($reviews) - 1 == $key && $page != 0 && count($reviews) < 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/reviews " . ($page - 1)],
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/reviews " . ($page - 1)],
             ]);
 
-        $bot->sendRequest("sendPhoto",
+        $bot->sendRequest("sendMessage",
             [
-                "chat_id" => "$id",
-                "photo" => env("APP_URL_IMAGES") . $review->image,
-                "caption" => "*" . $review->client_name . "*\n"
-                    . "_" . $review->review_text . "_\n",
+                "text" => "*" . $review->name . "*\n"
+                    . "_" . $review->message . "_\n",
                 "parse_mode" => "Markdown",
                 "disable_notification"=>true,
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
                 ])
-
             ]);
     }
 
@@ -373,16 +409,16 @@ function productList($bot, $page, $catId)
         ->get();
 
     if (count($products) == 0) {
-        $bot->reply("Товары в категории не найдены");
+        $bot->reply("No products found in this category");
         return;
     }
     foreach ($products as $key => $product) {
         $keyboard = [
             [
-                ['text' => "\xF0\x9F\x91\x89Детальнее", 'callback_data' => "/product_info " . $product->id],
+                ['text' => "\xF0\x9F\x91\x89More", 'callback_data' => "/product_info " . $product->id],
             ],
             [
-                ['text' => "\xE2\x86\xAAВ корзину(" . $product->price . "₽)", 'callback_data' => "/add_to_basket " . $product->id]
+                ['text' => "\xE2\x86\xAATo cart(" . $product->price . "£)", 'callback_data' => "/add_to_basket " . $product->id]
             ]
         ];
 
@@ -390,7 +426,7 @@ function productList($bot, $page, $catId)
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
-                "photo" => env("APP_URL_IMAGES") . $product->src[0]["name"],
+                "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]["path"],
                 "disable_notification"=>true,
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
@@ -402,22 +438,22 @@ function productList($bot, $page, $catId)
     $keyboard = [];
     if (count($products) - 1 == $key && $page == 0 && count($products) == 10)
         array_push($keyboard, [
-            ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/products " . ($page + 1) . " " . $catId]
+            ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/products " . ($page + 1) . " " . $catId]
         ]);
     if (count($products) - 1 == $key && $page != 0 && count($products) == 10)
         array_push($keyboard, [
-            ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/products " . ($page - 1) . " " . $catId],
-            ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/products " . ($page + 1) . " " . $catId]
+            ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/products " . ($page - 1) . " " . $catId],
+            ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/products " . ($page + 1) . " " . $catId]
         ]);
     if (count($products) - 1 == $key && $page != 0 && count($products) < 10)
         array_push($keyboard, [
-            ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/products " . ($page - 1) . " " . $catId],
+            ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/products " . ($page - 1) . " " . $catId],
         ]);
 
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
-            "text" => "Выберите действия",
+            "text" => "Select actions",
             "disable_notification"=>true,
             'reply_markup' => json_encode([
                 'inline_keyboard' =>
@@ -425,17 +461,14 @@ function productList($bot, $page, $catId)
             ])
         ]);
 }
-$botman->hears(".*Шапочки", function ($bot) {
-    productList($bot, 0, "Шапочка");
-});
-$botman->hears('.*Отзывы', function ($bot) {
+$botman->hears('.*Reviews', function ($bot) {
     reviews($bot, 0);
 });
 $botman->hears('/reviews ([0-9]+)', function ($bot, $page) {
     reviews($bot, $page);
 });
 
-/*Корзина*/
+/*Cart*/
 function basketMenu($bot, $message)
 {
     $telegramUser = $bot->getUser();
@@ -453,8 +486,8 @@ function basketMenu($bot, $message)
 
 
     $keyboard = [
-        ["Оформить заказ " . ($count == null ? "(0₽)" : "(" . $count . "₽)")],
-        ["Главное меню"],
+        ["Checkout " . ($count == null ? "(0£)" : "(" . $count . "£)")],
+        ["Main menu"],
     ];
     $bot->sendRequest("sendMessage",
         [
@@ -468,7 +501,7 @@ function basketMenu($bot, $message)
             ])
         ]);
 }
-$botman->hears('.*Корзина.*', function ($bot) {
+$botman->hears('.*Cart.*', function ($bot) {
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
@@ -476,43 +509,39 @@ $botman->hears('.*Корзина.*', function ($bot) {
     $basket = json_decode($bot->userStorage()->get("basket")) ?? [];
 
     if (count($basket) == 0) {
-        $bot->reply("Корзина пуста:(");
+        $bot->reply("Cart is empty:(");
         return;
     }
 
-    basketMenu($bot, "Cодержимое корзины");
+    basketMenu($bot, "Cart contents");
 
 
     foreach ($basket as $key => $product) {
         $keyboard = [
             [
-                ['text' => "\xF0\x9F\x91\x89Детальнее", 'callback_data' => "/product_info " . $product->id],
-                ['text' => "Убрать (" . $product->price . "₽)", 'callback_data' => "/remove_from_basket " . $product->id]
+                ['text' => "\xF0\x9F\x91\x89More", 'callback_data' => "/product_info " . $product->id],
+                ['text' => "Remove (" . $product->price . "£)", 'callback_data' => "/remove_from_basket " . $product->id]
             ],
         ];
         Log::info([$product]);
         if($product->number>1){
             Log::info('number > 1');
-            $button = ['text' => "Убрать все (" . $product->total . "₽)", 'callback_data' => "/remove_all_from_basket " . $product->id];
+            $button = ['text' => "Remove all (" . $product->total . "£)", 'callback_data' => "/remove_all_from_basket " . $product->id];
             array_push($keyboard, [$button]);
         }
         $text = "".$product->title."\n"
-            ."Кол-во:".$product->number." шт.";
+            ."Quantity:".$product->number." ";
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
                 "caption" => $text,
-                "photo" => 'https://ld-magento-72.template-help.com/magento_62000/pub/media/catalog/category/cat_3_lt_5.jpg',
+                "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]['path'],
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
                 ])
             ]);
-
-
     }
-
-
 });
 $botman->hears('/add_to_basket ([0-9]+)', function ($bot, $prodId) {
     $basket = json_decode($bot->userStorage()->get("basket"), true) ?? [];
@@ -558,7 +587,7 @@ $botman->hears('/add_to_basket ([0-9]+)', function ($bot, $prodId) {
         'basket' => json_encode($basket_tmp)
     ]);
 
-    mainMenu($bot, "Товар добавлен в корзину");
+    mainMenu($bot, "Product is added to cart");
 
 });
 $botman->hears('/remove_from_basket ([0-9]+)', function ($bot, $prodId) {
@@ -585,9 +614,9 @@ $botman->hears('/remove_from_basket ([0-9]+)', function ($bot, $prodId) {
     ]);
 
     if (count($basket_tmp) == 0)
-        mainMenu($bot,"Товар удален из корзины");
+        mainMenu($bot,"The item has been removed from the cart");
     else
-        basketMenu($bot, "Товар удален из корзины");
+        basketMenu($bot, "The item has been removed from the cart");
 
 });
 $botman->hears('/remove_all_from_basket ([0-9]+)', function ($bot, $prodId) {
@@ -607,298 +636,471 @@ $botman->hears('/remove_all_from_basket ([0-9]+)', function ($bot, $prodId) {
     ]);
 
     if (count($basket_tmp) == 0)
-        mainMenu($bot,"Товар удален из корзины");
+        mainMenu($bot,"The item has been removed from the cart");
     else
-        basketMenu($bot, "Товар удален из корзины");
+        basketMenu($bot, "The item has been removed from the cart");
 
 });
-$botman->hears('/do_order|Оформить заказ.*', BotManController::class . "@orderConversation");
-//$botman->hears('Запрос по VIN', function ($bot) {
+$botman->hears('/do_order|Checkout.*', BotManController::class . "@orderConversation");
+
+/*Service*/
+$botman->hears('.*Make an order.*', function ($bot) {
+    $text = 'Welcome! Here you can make an order. Choose the service that our typography provide.';
+            $inline_keyboard=[
+                [
+                    ["text" => "Business cards", "callback_data" => "/size Business_cards 200"],
+                    ["text" => "Leaflets", "callback_data" => "/size Leaflets 150"],
+                    ["text" => "Forms", "callback_data" => "/size Forms 120 "]
+                ],
+                [
+                    ["text" => "Booklets", "callback_data" => "/size Booklets 250 "],
+                    ["text" => "Stickers on paper", "callback_data" => "/size Stickers_on_paper 120"]
+                ],
+                [
+                    ["text" => "Plastic cards", "callback_data" => "/size Plastic_cards 300"],
+                    ["text" => "Drawings", "callback_data" => "/size Drawings 270"]
+                ],
+                [
+                    ["text" => "Pavement signs", "callback_data" => "/size Pavement_signs 130"],
+                    ["text" => "Banners", "callback_data" => "/size Banners 400"]
+                ],
+                [
+                    ["text" => "Acrylic plates", "callback_data" => "/size Acrylic_plates 500"],
+                    ["text" => "Stickers on tape", "callback_data" => "/size Stickers_on_tape 180"]
+                ],
+                [
+                    ["text" => "PVC plates", "callback_data" => "/size PVC_plates 260"],
+                    ["text" => "Stencils", "callback_data" => "/size Stencils 210"]
+                ]
+            ];
+            $bot->userStorage()->save([
+                'new_order_total' => 0
+            ]);
+            $telegramUser = $bot->getUser();
+            $id = $telegramUser->getId();
+            $this->bot->sendRequest("sendMessage",
+                [
+                    "chat_id" => "$id",
+                    "text" => $text,
+                    "parse_mode" => "Markdown",
+                    'reply_markup' => json_encode([
+                        'inline_keyboard' => $inline_keyboard
+                    ])
+                ]);
+});
+$botman->hears('/size ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $service, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+        $bot->userStorage()->save([
+        'service' => $service,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select the size you want:';
+    $inline_keyboard=[
+        [
+            ["text" => "90х50", "callback_data" => "/material 90х50 100"],
+            ["text" => "85х55", "callback_data" => "/material 85х55 110"],
+            ["text" => "100х70", "callback_data" => "/material 100х70 120"],
+        ],
+        [
+            ["text" => "100х90", "callback_data" => "/material 100х90 130"],
+            ["text" => "105х74", "callback_data" => "/material 105х74 140"],
+            ["text" => "148х70", "callback_data" => "/material 148х70 150"],
+        ],
+        [
+            ["text" => "148х105", "callback_data" => "/material 148х105 160"],
+            ["text" => "180х105", "callback_data" => "/material 180х105 170"],
+            ["text" => "200х70", "callback_data" => "/material 200х70 180"],
+        ],
+        [
+            ["text" => "204х101", "callback_data" => "/material 204х101 190"],
+            ["text" => "210х90", "callback_data" => "/material 210х90 200"],
+            ["text" => "210х99", "callback_data" => "/material 210х99 205"],
+        ],
+        [
+            ["text" => "210х148", "callback_data" => "/material 210х148 220"],
+            ["text" => "210х200", "callback_data" => "/material 210х200 250"],
+            ["text" => "297х210", "callback_data" => "/material 297х210 350"],
+        ],
+    ];
+
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/material ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $size, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'size' => $size,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select the material:';
+    $inline_keyboard = [
+        [
+            ["text" => "Raflatak with notches", "callback_data" => "/cover_ofset Raflatak_with_notches 50"],
+            ["text" => "Craft 70", "callback_data" => "/cover_ofset Craft_70 70"],
+        ],
+        [
+            ["text" => "Offset 80", "callback_data" => "/cover_ofset Offset_80 80"],
+            ["text" => "Mel MAT 115", "callback_data" => "/cover_ofset Mel_MAT_115 115"],
+            ["text" => "Mel GL 90", "callback_data" => "/cover_ofset Mel_GL_90 90"],
+        ],
+        [
+            ["text" => "Mel GL 115", "callback_data" => "/cover_ofset Mel_GL_115 115"],
+            ["text" => "Mel GL 130", "callback_data" => "/cover_ofset Mel_GL_130 130"],
+            ["text" => "Mel GL 150", "callback_data" => "/cover_ofset Mel_GL_150 150"],
+        ],
+        [
+            ["text" => "Mel GL 170", "callback_data" => "/cover_ofset Mel_GL_170 170"],
+            ["text" => "Mel GL 200", "callback_data" => "/cover_ofset Mel_GL_200 200"],
+            ["text" => "Mel GL 250", "callback_data" => "/cover_ofset Mel_GL_250 250"],
+        ],
+        [
+            ["text" => "Mel GL 300", "callback_data" => "/cover_ofset Mel_GL_300 300"],
+            ["text" => "Mel GL 350", "callback_data" => "/cover_ofset Mel_GL_350 350"],
+        ],
+    ];
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/cover_ofset ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $material, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'material' => $material,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select OFFSET coverage:';
+    $inline_keyboard = [
+        [
+            ["text" => "No", "callback_data" => "/cover No 0"],
+            ["text" => "GL lam 1 + 0", "callback_data" => "/cover GL_lam_1+0 50"],
+            ["text" => "GL lam 1 + 1", "callback_data" => "/cover GL_lam_1+1 100"],
+        ],
+        [
+            ["text" => "MAT lam 1 + 0", "callback_data" => "/cover MAT_lam_1+0 120"],
+            ["text" => "MAT lam 1 + 1", "callback_data" => "/cover MAT_lam_1+1 160"],
+            ["text" => "UV varnish 1 + 0", "callback_data" => "/cover UV_varnish_1+0 175"],
+        ],
+        [
+            ["text" => "Hybrid 1 + 0", "callback_data" => "/cover Hybrid_1+0 165"],
+        ],
+    ];
+
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/cover ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $cover_ofset, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'cover_ofset' => $cover_ofset,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select coverage:';
+    $inline_keyboard = [
+        [
+            ["text" => "No", "callback_data" => "/processing No 0"],
+            ["text" => "Roll lamination", "callback_data" => "/processing Roll_lamination 40"],
+        ],
+        [
+            ["text" => "Envelope lamination", "callback_data" => "/processing Envelope_lamination 45"],
+            ["text" => "Glossy UV varnish", "callback_data" => "/processing Glossy_UV_varnish 50"],
+        ],
+    ];
+
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/processing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $cover, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'cover' => $cover,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select post-printing:';
+    $inline_keyboard = [
+        [
+            ["text" => "Personalization", "callback_data" => "/printing Personalization 30"],
+            ["text" => "Rounding corners", "callback_data" => "/printing Rounding_corners 43"],
+        ],
+        [
+            ["text" => "Glue to block", "callback_data" => "/printing Glue_to_block 56"],
+            ["text" => "Drilling", "callback_data" => "/printing Drilling 75"],
+        ],
+        [
+            ["text" => "Fold", "callback_data" => "/printing Fold 25"],
+            ["text" => "Creasing", "callback_data" => "/printing Creasing 89"],
+        ],
+        [
+            ["text" => "Perforation", "callback_data" => "/printing Perforation 74"],
+            ["text" => "Plotter slicing", "callback_data" => "/printing Plotter_slicing 63"],
+        ],
+        [
+            ["text" => "Notching", "callback_data" => "/printing Notching 28"],
+            ["text" => "Envelope lamination", "callback_data" => "/printing Envelope_lamination 47"],
+        ],
+    ];
+
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/printing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $processing, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'processing' => $processing,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Choose a print option:';
+    $inline_keyboard = [
+        [
+            ["text" => "Full color 4 + 0", "callback_data" => "/quantity Full_color_4+0 200"],
+            ["text" => "Full color 4 + 4", "callback_data" => "/quantity Full_color_4+4 300"],
+        ],
+        [
+            ["text" => "Black and white 1 + 0", "callback_data" => "/quantity Black_and_white_1+0 100"],
+            ["text" => "Black and white 1 + 1", "callback_data" => "/quantity Black_and_white_1+1 130"],
+        ],
+        [
+            ["text" => "White 1 + 0", "callback_data" => "/quantity White_1+0 50"],
+            ["text" => "White 2 + 0", "callback_data" => "/quantity White_2+0 70"],
+        ],
+        [
+            ["text" => "White 1 + 1", "callback_data" => "/quantity White_1+1 80"],
+            ["text" => "White 2 + 1", "callback_data" => "/quantity White_2+1 90"],
+        ],
+        [
+            ["text" => "Digital varnish 1 + 0", "callback_data" => "/quantity Digital_varnish_1+0 150"],
+            ["text" => "Digital varnish 1 + 1", "callback_data" => "/quantity Digital_varnish_1+1 180"],
+        ],
+    ];
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/quantity ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $printing, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'printing' => $printing,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select the required number of copies:';
+    $inline_keyboard = [
+        [
+            ["text" => "1", "callback_data" => "/period 1 30"],
+            ["text" => "5", "callback_data" => "/period 5 50"],
+            ["text" => "25", "callback_data" => "/period 25 80"],
+        ],
+        [
+            ["text" => "50", "callback_data" => "/period 50 100"],
+            ["text" => "100", "callback_data" => "/period 100 130"],
+            ["text" => "200", "callback_data" => "/period 200 250"],
+        ],
+        [
+            ["text" => "500", "callback_data" => "/period 500 700"],
+        ],
+    ];
+
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+$botman->hears('/period ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $quantity, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'quantity' => $quantity,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = 'Select a print period:';
+    $inline_keyboard = [
+        [
+            ["text" => "Express 3 hours", "callback_data" => "/make_an_order Express 400"],
+            ["text" => "Standard 1 day", "callback_data" => "/make_an_order Standard 250"],
+        ],
+        [
+            ["text" => "Economy 2 days", "callback_data" => "/make_an_order Economy 150"],
+            ["text" => "Super economy 3 days", "callback_data" => "/make_an_order Super_economy 50"]
+        ]
+    ];
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+    $this->bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $text,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' => $inline_keyboard
+            ])
+        ]);
+});
+//$botman->hears('/image ([а-яА-Яa-zA-Z0-9]+)', function ($bot, $period) {
+//    $bot->userStorage()->save([
+//        'period' => $period
+//    ]);
+//    $text = 'Please upload an image:';
+//    $bot->receivesImages(function($bot, $images) {
+//
+//        foreach ($images as $image) {
+//            $url = $image->getUrl(); // The direct url
+//            $title = $image->getTitle(); // The title, if available
+//            $payload = $image->getPayload(); // The original payload
+//        }
+//    });
 //
 //    $telegramUser = $bot->getUser();
 //    $id = $telegramUser->getId();
-////    $phone = $telegramUser->getPhone();
-//
-//
-//
-//    $keyboard = [
-//        [
-//            ['text' => "Поиск шин", 'callback_data' => "/search_1"],
-//            ['text' => "Поиск дисков", 'callback_data' => "/search_2"],
-//
-//        ],
-//    ];
-//
-//    $bot->sendRequest("sendMessage",
+//    $this->bot->sendRequest("sendMessage",
 //        [
 //            "chat_id" => "$id",
-//            "text" => "Спасибо за ваше исскуство!",
-//            'reply_markup' => json_encode([
-//                'inline_keyboard' =>
-//                    $keyboard
-//            ])
+//            "text" => $text,
+//            "parse_mode" => "Markdown",
 //        ]);
-//
 //});
 
-/*Запрос по VIN*/
-function vinMenu($bot, $message)
-{
+$botman->hears('/make_an_order ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $period, $price) {
+    $new_order_total = intval($bot->userStorage()->get("new_order_total"));
+    $new_order_total =  $new_order_total + intval($price);
+    $bot->userStorage()->save([
+        'period' => $period,
+        'new_order_total' => $new_order_total
+    ]);
+    $text = "* Your order *: \ n"
+         . "* Service *:". $bot->userStorage()->get("service"). "\n"
+         . "*The size*:" . $bot->userStorage()->get("size"). "\n"
+         . "* Material *:". $bot->userStorage()->get("material"). "\n"
+         . "* Offset *:". $bot->userStorage()->get("cover_ofset"). "\n"
+         . "* Coverage *:". $bot->userStorage()->get("cover"). "\n"
+         . "* Post-processing *:". $bot->userStorage()->get("processing"). "\n"
+         . "* Print *:". $bot->userStorage()->get("printing"). "\n"
+         . "* Number of copies *:". $bot->userStorage()->get("quantity"). "\n"
+         . "* Printing time *:".$bot->userStorage()->get("period"). "\n"
+         . "* Amount to be paid *:". $new_order_total ." £ \n"
+         . "*Order date*:" . (Carbon :: now ('+ 3:00'));
+
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-
-    $keyboard = [
-        ["Главное меню"],
-    ];
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
-            "text" => $message,
+            "text" => $text,
             "parse_mode" => "Markdown",
-            'reply_markup' => json_encode([
-                'keyboard' => $keyboard,
-                'one_time_keyboard' => false,
-                'resize_keyboard' => true
-            ])
         ]);
-}
-$botman->hears('Запрос по VIN|/vin', function ($bot) {
-    vinMenu($bot,'Наш интернет-магазин предоставляет вам возможность осуществить подбор запчастей по VIN в онлайн режиме. Это позволит с максимальной оперативностью найти требуемую деталь, получая гарантии того, что она идеально подойдет для вашего авто. После заполнения всех данных, запрос сразу будет отправлен нам.');
-    $bot->startConversation(new VinConversation($bot));
+    serviceOrderMenu($bot,'You complete your order. What do you want to do now? You can send this order to us or remove it and make another one. Just press button in inline menu');
 });
-function vinMark($bot, $page){
-    $telegramUser = $bot->getUser();
-    $id = $telegramUser->getId();
-
-    $marks_request = json_decode($bot->userStorage()->get("marks")) ?? [];
-    $marks= array_chunk($marks_request, 10);
-
-    foreach ($marks[$page] as $key => $mark) {
-        $keyboard = [
-            [
-                ['text' => "Выбрать", 'callback_data' => "/model" . $mark->value],
-            ],
-        ];
-
-        if (count($marks[$page]) - 1 == $key && $page == 0 && count($marks[$page]) == 10)
-        {
-            $new_page = $page + 1;
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/mark " . ($page + 1)]
-            ]);
-        }
-
-        if (count($marks[$page]) - 1 == $key && $page != 0 && count($marks[$page]) == 10)
-        {
-            $new_page = $page + 1;
-            $old_page = $page - 1;
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' =>"/mark " . ($page - 1)],
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/mark " . ($page + 1)]
-            ]);
-        }
-
-
-        if (count($marks[$page]) - 1 == $key && $page != 0 && count($marks[$page]) < 10)
-        {
-            $old_page = $page - 1;
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/mark " . ($page - 1)],
-            ]);
-        }
-
-        $bot->sendRequest("sendMessage",
-            [
-                "chat_id" => "$id",
-                "text" => $mark->name,
-                'reply_markup' => json_encode([
-                    'inline_keyboard' =>
-                        $keyboard
-                ])
-            ]);
-    }
-};
-$botman->hears('/mark ([0-9]+)', function ($bot, $page)
-{
-    $telegramUser = $bot->getUser();
-    $id = $telegramUser->getId();
-
-    $marks_request = json_decode($bot->userStorage()->get("marks")) ?? [];
-    $marks= array_chunk($marks_request, 10);
-
-    Log::info('page = '.$page);
-    foreach ($marks[$page] as $key => $mark) {
-        $keyboard = [
-            [
-                ['text' => "Выбрать", 'callback_data' => "/model" . $mark->value],
-            ],
-        ];
-
-        if (count($marks[$page]) - 1 == $key && $page == 0 && count($marks[$page]) == 10)
-        {
-            $new_page = $page + 1;
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/mark " . ($page + 1)]
-            ]);
-        }
-
-        if (count($marks[$page]) - 1 == $key && $page != 0 && count($marks[$page]) == 10)
-        {
-            $new_page = $page + 1;
-            $old_page = $page - 1;
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' =>"/mark " . ($page - 1)],
-                ['text' => "\xE2\x8F\xA9Далее", 'callback_data' => "/mark " . ($page + 1)]
-            ]);
-        }
-
-
-        if (count($marks[$page]) - 1 == $key && $page != 0 && count($marks[$page]) < 10)
-        {
-            $old_page = $page - 1;
-            array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAAНазад", 'callback_data' => "/mark " . ($page - 1)],
-            ]);
-        }
-
-
-        $bot->sendRequest("sendMessage",
-            [
-                "chat_id" => "$id",
-                "text" => $mark->name,
-                'reply_markup' => json_encode([
-                    'inline_keyboard' =>
-                        $keyboard
-                ])
-            ]);
-    }Log::info('page = '.$page);
-});
-$botman->hears('/model ([0-9]+)', function ($bot, $id){
-    $bot->userStorage()->save([
-        'mark_id' => $id
-    ]);
-//    $bot->askModel();
-});
-
-/*Заказ уникального товара*/
-function uniqueOrderMenu($bot, $message)
-{
-    $telegramUser = $bot->getUser();
-    $id = $telegramUser->getId();
-
-    $orders = json_decode($bot->userStorage()->get("orders")) ?? [];
-//    $orders =[];
-//    $bot->userStorage()->save([
-//        'orders' => json_encode($orders)
-//    ]);
-    $keyboard = [
-        ["Добавить запчасть"],
-    ];
-
-    if(count($orders))
-    {
-        array_push($keyboard, ["Отправить заказ"]);
-    }
-    array_push($keyboard, ["Главное меню"]);
-    $bot->sendRequest("sendMessage",
-        [
-            "chat_id" => "$id",
-            "text" => $message,
-            "parse_mode" => "Markdown",
-            'reply_markup' => json_encode([
-                'keyboard' => $keyboard,
-                'one_time_keyboard' => false,
-                'resize_keyboard' => true
-            ])
-        ]);
-}
-$botman->hears('Заказ уникального товара|/uniqueOrder', function ($bot) {
-    $telegramUser = $bot->getUser();
-    $id = $telegramUser->getId();
-    $orders = json_decode($bot->userStorage()->get("orders")) ?? [];
-    if (count($orders)){
-        uniqueOrderMenu($bot,"У Вас есть сохраненные заказы.");
-        foreach ($orders as $key => $order) {
-
-            $keyboard = [
-                [
-                    ['text' => "Убрать", 'callback_data' => "/remove_from_orders " . $order->id]
-                ],
-            ];
-            $text = "*".($key + 1) . ") Название:* ". $order->title ."\n"
-                ."*Артикул:* " . $order->code . "\n"
-                ."*Кол-во:* " . $order->quantity . "\n"
-                ."*Примечание:* ".$order->note."\n";
-            $bot->sendRequest("sendMessage",
-                [
-                    "chat_id" => "$id",
-                    'parse_mode' => 'Markdown',
-                    "text" => $text,
-                    'reply_markup' => json_encode([
-                        'inline_keyboard' =>
-                            $keyboard
-                    ])
-                ]);
-        }
-    }
-    else{
-        uniqueOrderMenu($bot,'Для того, чтобы сделать уникальный заказ, необходимо указать наименование, артикул запчасти, а также ее количество и по желанию примечание');
-        $bot->startConversation(new UniqueOrderConversation($bot));
-    }
-});
-$botman->hears('Добавить запчасть|/add_order', BotManController::class . "@uniqueOrderConversation");
-$botman->hears('/remove_from_orders ([0-9]+)', function ($bot, $orderId) {
-    $orders = json_decode($bot->userStorage()->get("orders")) ?? [];
-
-    $orders_tmp = [];
-
-    foreach ($orders as $order) {
-        if ($order->id != $orderId)
-        {
-            array_push($orders_tmp, $order);
-        }
-    }
-
-    $bot->userStorage()->save([
-        'orders' => json_encode($orders_tmp)
-    ]);
-
-    if (count($orders_tmp) == 0)
-        mainMenu($bot,"Все заказы удалены");
-    else
-        uniqueOrderMenu($bot, "Заказ удален");
-
-});
-$botman->hears('Отправить заказ.*',function ($bot) {
-    $telegramUser = $bot->getUser();
-    $id = $telegramUser->getId();
-    $user = \App\User::where("telegram_chat_id", $id)->first();
-    $orders = json_decode($bot->userStorage()->get("orders")) ?? [];
-    $order_tmp = "*Бот* Заказ уникального товара:\n"
-            . "*Имя*:" . ($user->fio_from_telegram ?? $user->name ). "\n"
-            . "*Телефон*:" . $user->phone . "\n"
-        . "*Дата заказа*:" . (Carbon::now('+3:00')) . "\n*Заказ*:\n";
-    foreach ($orders as $key => $order) {
-        $order_tmp .= "\n*".($key + 1) . ") Название:* ". $order->title ."\n"
-            ."*Артикул:* " . $order->code . "\n"
-            ."*Кол-во:* " . $order->quantity . "\n"
-            ."*Примечание:* ".$order->note."\n";
-    }
+$botman->hears('/send_an_order|Send an order', function ($bot) {
+    $text = "* New order *: \ n"
+        . "* Service *:". $bot->userStorage()->get("service"). "\n"
+        . "*The size*:" . $bot->userStorage()->get("size"). "\n"
+        . "* Material *:". $bot->userStorage()->get("material"). "\n"
+        . "* Offset *:". $bot->userStorage()->get("cover_ofset"). "\n"
+        . "* Coverage *:". $bot->userStorage()->get("cover"). "\n"
+        . "* Post-processing *:". $bot->userStorage()->get("processing"). "\n"
+        . "* Print *:". $bot->userStorage()->get("printing"). "\n"
+        . "* Number of copies *:". $bot->userStorage()->get("quantity"). "\n"
+        . "* Printing time *:".$bot->userStorage()->get("period"). "\n"
+        . "* Amount to be paid *:". $bot->userStorage()->get("new_order_total")." £ \n"
+        . "*Order date*:" . (Carbon :: now ('+ 3:00'));
 
     try {
         Telegram::sendMessage([
             'chat_id' => env("CHANNEL_ID"),
             'parse_mode' => 'Markdown',
-            'text' => $order_tmp,
+            'text' => $text,
             'disable_notification' => 'false'
         ]);
     } catch (\Exception $e) {
-        Log::info("Ошибка отправки заказа в канал!");
+        Log::info("Error sending order to channel!");
     }
-
-    $bot->userStorage()->save([
-        'orders' => json_encode([])
-    ]);
-    mainMenu($bot,"Ваши заказы успешно отправлены");
+    mainMenu($bot,"Your order have been sent successfully");
 });
+
+function serviceOrderMenu($bot,$message)
+{
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+
+    $keyboard = [
+        ["Main menu"]
+        ["Send an order"],
+        ["Remove order"],
+    ];
+
+    $bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $message,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'keyboard' => $keyboard,
+                'one_time_keyboard' => false,
+                'resize_keyboard' => true
+            ])
+        ]);
+}
 

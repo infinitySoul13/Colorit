@@ -30,11 +30,10 @@ class OrderConversation extends Conversation
         }
 
         $keyboard = [
-            ["Товары"],
-            ["Корзина" . ($count == null ? "(0₽)" : "(" . $count . "₽)")],
-//            ["Запрос по VIN"],
-//            ["Заказ уникального товара"],
-            ["О Нас"],
+            ["Products"],
+            ["Cart" . ($count == null ? "(0£)" : "(" . $count . "£)")],
+            ["Make an order"],
+            ["About us"],
         ];
 
 
@@ -67,21 +66,21 @@ class OrderConversation extends Conversation
 
         $basket = json_decode($this->bot->userStorage()->get("basket")) ?? [];
 
-        $order_tmp = "*Бот* Новая заявка:\n"
-            . "*Имя на сайте*:" . $this->user->name . "\n"
-            . "*Имя в Telegram*:" . $this->user->fio_from_telegram . "\n"
-            . "*Телефон*:" . $this->user->phone . "\n"
-            . "*Дата заказа*:" . (Carbon::now('+3:00')) . "\n*Заказ*:\n";
+        $order_tmp = "*Bot* New order:\n"
+            . "*Name*:" . $this->user->name . "\n"
+            . "*Name in Telegram*:" . $this->user->fio_from_telegram . "\n"
+            . "*Phone*:" . $this->user->phone . "\n"
+            . "*Date*:" . (Carbon::now('+3:00')) . "\n*Order*:\n";
 
         $summary = 0;
 
         foreach ($basket as $key => $product) {
             $summary += floatval($product->total);
             $order_tmp .= "*".($key + 1) . ")*" . $product->title ."\n"
-                ."*Цена:* " . $product->price . "₽ \n*Кол-во:* ".$product->number. " шт.\n*Итого:* ".$product->total . "₽\n";
+                ."*Price:* " . $product->price . "£ \n*Quantity:* ".$product->number. " шт.\n*Total:* ".$product->total . "£\n";
         }
 
-        $order_tmp .= "*Сумма заказа*:" . $summary . "₽";
+        $order_tmp .= "*Order Total*:" . $summary . "£";
 
         try {
             Telegram::sendMessage([
@@ -91,7 +90,7 @@ class OrderConversation extends Conversation
                 'disable_notification' => 'false'
             ]);
         } catch (\Exception $e) {
-            Log::info("Ошибка отправки заказа в канал!");
+            Log::info("Error sending order to channel!");
         }
 
         $this->bot->userStorage()->save([
@@ -100,7 +99,7 @@ class OrderConversation extends Conversation
 
         $this->bot->userStorage()->delete();
 
-        $this->mainMenu("Заказ отправлен!");
+        $this->mainMenu("The order has been sent!");
 
     }
 
@@ -111,7 +110,6 @@ class OrderConversation extends Conversation
      */
     public function run()
     {
-        //
         $this->sendOrder();
     }
 }
