@@ -214,10 +214,10 @@ $botman->hears('/category {page} {cat}', function ($bot, $page, $cat) {
                 ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category " . ($page - 1) . " " . $cat],
             ]);
         $photo ='https://colorit-it.herokuapp.com/img/2colorit.png';
-//        if($product->src[0]['path'])
-//        {
-//            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
-//        }
+        if($product->src[0]['path'])
+        {
+            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
+        }
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
@@ -282,7 +282,7 @@ $botman->hears('/product_info ([0-9]+)', function ($bot, $productId) {
     $keyboard = [
         [
             ['text' => "\xE2\x86\xAATo cart(" . $product->price . "£)", 'callback_data' => "/add_to_basket " . $product->id],
-            ['text' => "Reviews", 'callback_data' => "/product_reviews " . $product->id],
+            ['text' => "Reviews", 'callback_data' => "/reviews " . $product->id],
         ]
     ];
 
@@ -306,6 +306,7 @@ $botman->hears('/product_info ([0-9]+)', function ($bot, $productId) {
             "chat_id" => "$id",
             "text" => $message,
             "disable_notification"=>true,
+            "parse_mode" => "Markdown",
             'reply_markup' => json_encode([
                 'inline_keyboard' =>
                     $keyboard
@@ -496,7 +497,6 @@ function basketMenu($bot, $message)
         $count += floatval($product->total);
     }
 
-
     $keyboard = [
         ["Checkout " . ($count == null ? "(0£)" : "(" . $count . "£)")],
         ["Main menu"],
@@ -535,7 +535,7 @@ $botman->hears('.*Cart.*', function ($bot) {
                 ['text' => "Remove (" . $product->price . "£)", 'callback_data' => "/remove_from_basket " . $product->id]
             ],
         ];
-        Log::info([$product]);
+        Log::info(["$product"]);
         if($product->number>1){
             Log::info('number > 1');
             $button = ['text' => "Remove all (" . $product->total . "£)", 'callback_data' => "/remove_all_from_basket " . $product->id];
@@ -544,9 +544,10 @@ $botman->hears('.*Cart.*', function ($bot) {
         $text = "".$product->title."\n"
             ."Quantity:".$product->number." ";
         $photo ='https://colorit-it.herokuapp.com/img/2colorit.png';
-        if($product->src[0]['path'])
+        $src = $product->src[0];
+        if($src->path)
         {
-            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
+            $photo ='https://colorit-it.herokuapp.com'.$src->path;
         }
         $bot->sendRequest("sendPhoto",
             [
