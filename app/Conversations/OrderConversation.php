@@ -52,18 +52,16 @@ class OrderConversation extends Conversation
 
     public function __construct($bot)
     {
-        $telegramUser = $bot->getUser()->getId();
-
-        Log::info("telegram chat id=$telegramUser");
+        $telegramUser = $bot->getUser();
+        $id =  $telegramUser->getId();
         $this->bot = $bot;
 
-        $this->user = User::where("telegram_chat_id", $telegramUser)->first();
+        $this->user = User::where("telegram_chat_id", $id)->first();
 
     }
 
     public function sendOrder()
     {
-
         $basket = json_decode($this->bot->userStorage()->get("basket")) ?? [];
 
         $order_tmp = "*Bot* New order:\n"

@@ -93,8 +93,8 @@ function aboutMenu($bot, $message)
         ]);
 }
 $botman->hears('/start|Main menu', function ($bot) {
-//    createUser($bot);
-    mainMenu($bot, 'Main menu');
+    createUser($bot);
+//    mainMenu($bot, 'Main menu');
 })->stopsConversation();
 $botman->hears('/stop', function ($bot) {
     mainMenu($bot, 'Main menu');
