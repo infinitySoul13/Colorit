@@ -695,7 +695,7 @@ $botman->hears('.*Make an order.*', function ($bot) {
             ])
         ]);
 });
-$botman->hears('/size ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $service, $price) {
+$botman->hears('/size {service} ([0-9]+)', function ($bot, $service, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
         $bot->userStorage()->save([
@@ -743,7 +743,7 @@ $botman->hears('/size ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $servi
             ])
         ]);
 });
-$botman->hears('/material ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $size, $price) {
+$botman->hears('/material {size} ([0-9]+)', function ($bot, $size, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -788,7 +788,7 @@ $botman->hears('/material ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $s
             ])
         ]);
 });
-$botman->hears('/cover_ofset ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $material, $price) {
+$botman->hears('/cover_ofset {material} ([0-9]+)', function ($bot, $material, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -824,7 +824,7 @@ $botman->hears('/cover_ofset ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot,
             ])
         ]);
 });
-$botman->hears('/cover ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $cover_ofset, $price) {
+$botman->hears('/cover {cover_ofset} ([0-9]+)', function ($bot, $cover_ofset, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -855,7 +855,7 @@ $botman->hears('/cover ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $cove
             ])
         ]);
 });
-$botman->hears('/processing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $cover, $price) {
+$botman->hears('/processing {cover} ([0-9]+)', function ($bot, $cover, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -898,7 +898,7 @@ $botman->hears('/processing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, 
             ])
         ]);
 });
-$botman->hears('/printing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $processing, $price) {
+$botman->hears('/printing {processing} ([0-9]+)', function ($bot, $processing, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -940,7 +940,7 @@ $botman->hears('/printing ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $p
             ])
         ]);
 });
-$botman->hears('/quantity ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $printing, $price) {
+$botman->hears('/quantity {quantity} ([0-9]+)', function ($bot, $printing, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -976,7 +976,7 @@ $botman->hears('/quantity ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $p
             ])
         ]);
 });
-$botman->hears('/period ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $quantity, $price) {
+$botman->hears('/period {period} ([0-9]+)', function ($bot, $quantity, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
@@ -1030,7 +1030,7 @@ $botman->hears('/period ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $qua
 //        ]);
 //});
 
-$botman->hears('/make_an_order ([а-яА-Яa-zA-Z0-9]+) ([0-9]+)', function ($bot, $period, $price) {
+$botman->hears('/make_an_order {period} ([0-9]+)', function ($bot, $period, $price) {
     $new_order_total = intval($bot->userStorage()->get("new_order_total"));
     $new_order_total =  $new_order_total + intval($price);
     $bot->userStorage()->save([
