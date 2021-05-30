@@ -162,7 +162,7 @@ $botman->hears("Products", function ($bot) {
                 'reply_markup' => json_encode([
                     'inline_keyboard' => [
                         [
-                            ["text" => "\xF0\x9F\x91\x89More", "callback_data" => "/category 0 $category->title"]
+                            ["text" => "\xF0\x9F\x91\x89More", "callback_data" => "/category 0 ".$category->title]
                         ]
                     ],
                 ])
@@ -170,13 +170,13 @@ $botman->hears("Products", function ($bot) {
     }
 
 });
-$botman->hears('/category ([0-9]+) ([а-яА-Яa-zA-Z0-9]+)', function ($bot, $page, $cat) {
+$botman->hears('/category ([0-9]+) {cat}', function ($bot, $page, $cat) {
 
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
 //    $categories = \App\Product::all()->unique('category');
-    $categories = \App\Category::all();
+//    $categories = \App\Category::all();
 
     $products = \App\Product::where("category", $cat)
         ->where("quantity",">","0")
@@ -199,25 +199,25 @@ $botman->hears('/category ([0-9]+) ([а-яА-Яa-zA-Z0-9]+)', function ($bot, $p
 
         if (count($products) - 1 == $key && $page == 0 && count($products) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $cat]
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category " . ($page + 1) . " " . $cat]
             ]);
 
         if (count($products) - 1 == $key && $page != 0 && count($products) == 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $cat],
-                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category  " . ($page + 1) . " " . $cat]
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category " . ($page - 1) . " " . $cat],
+                ['text' => "\xE2\x8F\xA9Next", 'callback_data' => "/category " . ($page + 1) . " " . $cat]
             ]);
 
         if (count($products) - 1 == $key && $page != 0 && count($products) < 10)
             array_push($keyboard, [
-                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category  " . ($page - 1) . " " . $cat],
+                ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category " . ($page - 1) . " " . $cat],
             ]);
 
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
                 "caption" => $product->title,
-                "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]['path'],
+                "photo" => 'https://colorit-it.herokuapp.com'.$product->src[0]['path'],
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
@@ -287,7 +287,7 @@ $botman->hears('/product_info ([0-9]+)', function ($bot, $productId) {
 //    $bot->sendRequest("sendPhoto",
 //        [
 //            "chat_id" => "$id",
-//            "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]['path'],
+//            "photo" => 'https://colorit-it.herokuapp.com'.$product->src[0]['path'],
 //            "caption" => $message,
 //            "parse_mode" => "Markdown",
 //            "disable_notification"=>true,
@@ -315,7 +315,7 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
     $id = $telegramUser->getId();
     $product = Product::find($productId);
     foreach ($product->src as $image) {
-        $attachment = new Image('http//colorit-it.herokuapp.com'.$image['path'], [
+        $attachment = new Image('https://colorit-it.herokuapp.com'.$image['path'], [
             'custom_payload' => true,
         ]);
         $message = OutgoingMessage::create("*".$product->title."*\n" .
@@ -325,7 +325,7 @@ $botman->hears("/product_photos ([0-9]+) ([0-9]+)", function ($bot, $page, $prod
         $bot->reply($message, ["parse_mode" => "Markdown"]);
     }
 //    for ($i = 0; $i < 5; $i++) {
-//        $attachment = new Image('http://www.vintec.co.rs/admin/content/image5.jpg', [
+//        $attachment = new Image('https://www.vintec.co.rs/admin/content/image5.jpg', [
 //            'custom_payload' => true,
 //        ]);
 //
@@ -433,7 +433,7 @@ function productList($bot, $page, $catId)
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
-                "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]["path"],
+                "photo" => 'https://colorit-it.herokuapp.com'.$product->src[0]["path"],
                 "disable_notification"=>true,
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
@@ -542,7 +542,7 @@ $botman->hears('.*Cart.*', function ($bot) {
             [
                 "chat_id" => "$id",
                 "caption" => $text,
-                "photo" => 'http//colorit-it.herokuapp.com'.$product->src[0]['path'],
+                "photo" => 'https://colorit-it.herokuapp.com'.$product->src[0]['path'],
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
@@ -1037,7 +1037,7 @@ $botman->hears('/make_an_order {period} ([0-9]+)', function ($bot, $period, $pri
         'period' => $period,
         'new_order_total' => $new_order_total
     ]);
-    $text = "* Your order *: \ n"
+    $text = "* Your order *: \n"
          . "* Service *:". $bot->userStorage()->get("service"). "\n"
          . "*The size*:" . $bot->userStorage()->get("size"). "\n"
          . "* Material *:". $bot->userStorage()->get("material"). "\n"
@@ -1049,19 +1049,18 @@ $botman->hears('/make_an_order {period} ([0-9]+)', function ($bot, $period, $pri
          . "* Printing time *:".$bot->userStorage()->get("period"). "\n"
          . "* Amount to be paid *:". $new_order_total ." £ \n"
          . "*Order date*:" . (Carbon :: now ('+ 3:00'));
-
+    serviceOrderMenu($bot,'You complete your order. What do you want to do now? You can send this order to us or remove it and make another one. Just press button in inline menu');
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
             "text" => $text,
-            "parse_mode" => "Markdown",
+            "parse_mode" => "HTML",
         ]);
-    serviceOrderMenu($bot,'You complete your order. What do you want to do now? You can send this order to us or remove it and make another one. Just press button in inline menu');
 });
 $botman->hears('/send_an_order|Send an order', function ($bot) {
-    $text = "* New order *: \ n"
+    $text = "* New order *: \n"
         . "* Service *:". $bot->userStorage()->get("service"). "\n"
         . "*The size*:" . $bot->userStorage()->get("size"). "\n"
         . "* Material *:". $bot->userStorage()->get("material"). "\n"
@@ -1077,7 +1076,7 @@ $botman->hears('/send_an_order|Send an order', function ($bot) {
     try {
         Telegram::sendMessage([
             'chat_id' => env("CHANNEL_ID"),
-            'parse_mode' => 'Markdown',
+            'parse_mode' => 'HTML',
             'text' => $text,
             'disable_notification' => 'false'
         ]);
