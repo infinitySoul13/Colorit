@@ -537,7 +537,6 @@ $botman->hears('.*Cart.*', function ($bot) {
                 ['text' => "Remove (" . $product->price . "£)", 'callback_data' => "/remove_from_basket " . $product->id]
             ],
         ];
-        Log::info(["$product"]);
         if($product->number>1){
             Log::info('number > 1');
             $button = ['text' => "Remove all (" . $product->total . "£)", 'callback_data' => "/remove_all_from_basket " . $product->id];
