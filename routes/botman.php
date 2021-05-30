@@ -214,10 +214,10 @@ $botman->hears('/category {page} {cat}', function ($bot, $page, $cat) {
                 ['text' => "\xE2\x8F\xAABack", 'callback_data' => "/category " . ($page - 1) . " " . $cat],
             ]);
         $photo ='https://colorit-it.herokuapp.com/img/2colorit.png';
-        if($product->src[0]['path'])
-        {
-            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
-        }
+//        if($product->src[0]['path'])
+//        {
+//            $photo ='https://colorit-it.herokuapp.com'.$product->src[0]['path'];
+//        }
         $bot->sendRequest("sendPhoto",
             [
                 "chat_id" => "$id",
