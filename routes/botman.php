@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use App\Conversations\UserConversation;
-use App\Conversations\UniqueOrderConversation;
-use App\Conversations\VinConversation;
 
 $botman = resolve('botman');
 
@@ -24,7 +22,7 @@ function createUser($bot)
     $lastName = $telegramUser->getLastName();
     $firstName = $telegramUser->getFirstName();
 
-    $user = \App\User::where("telegram_chat_id", $id)->first();
+    $user = User::where("telegram_chat_id", $id)->first();
     if ($user == null)
     {
         $bot->startConversation(new UserConversation($bot));
@@ -397,7 +395,7 @@ $product = Product::with(['reviews'])->find($productId);
         $bot->sendRequest("sendMessage",
             [
                 "chat_id" => "$id",
-                "text" => "*" . $review->name . "*\n"
+                "text" => "* Review from: " . $review->name . "*\n"
                     . "_" . $review->message . "_\n",
                 "parse_mode" => "Markdown",
                 "disable_notification"=>true,

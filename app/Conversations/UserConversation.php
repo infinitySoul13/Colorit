@@ -11,7 +11,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Laravel\Facades\Telegram;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class UserConversation extends Conversation
 {
@@ -96,10 +96,10 @@ class UserConversation extends Conversation
                 $this->askPhone();
 //                return;
             } else {
-                $tmp_user = \App\User::where("phone", $tmp_phone)->first();
+                $tmp_user = User::where("phone", $tmp_phone)->first();
                 if ($tmp_user == null) {
 
-                    $user = \App\User::create([
+                    $user = User::create([
                         'name' => $this->username ?? "$this->id",
                         'fio_from_telegram' => $this->firstName." ".$this->lastName,
                         'telegram_chat_id' => $this->id,
@@ -126,9 +126,7 @@ class UserConversation extends Conversation
 //                    }
                     $this->mainMenu("We are already familiar with you.");
                 }
-
             }
-
         });
     }
     public function askName() {
@@ -136,8 +134,7 @@ class UserConversation extends Conversation
             ->fallback('Thank you for chatting with me:)!');
 
         $this->ask($question, function (Answer $answer) {
-            $this->name = $answer->getText();
-            $this->user->name = $this->name;
+            $this->user->name = $answer->getText();
             $this->user->save();
             $this->mainMenu("Now we are familiar with you. Welcome to the ColorIt store bot");
         });
