@@ -21,6 +21,7 @@ class UserConversation extends Conversation
     protected $lastName;
     protected $firstName;
     protected $user;
+    protected $phone;
 
     public function __construct($bot)
     {
@@ -72,61 +73,16 @@ class UserConversation extends Conversation
             ->fallback('Thank you for chatting with me:)!');
 
         $this->ask($question, function (Answer $answer) {
-//            $vowels = array("(", ")", "-", " ");
-            $tmp_phone = $answer->getText();
-//            $tmp_phone = str_replace($vowels, "", $tmp_phone);
-//            if (strpos($tmp_phone, "+38") === false)
-//                $tmp_phone = "+38" . $tmp_phone;
-
-            Log::info("phone=$tmp_phone");
-
-//            $pattern = "/^\+38 (\d{3}) \d{2}-\d{2}-\d{2}$/";
-//            Log::info(preg_match($pattern, $tmp_phone));
+            $this->phone = $answer->getText();
             $validator = Validator::make(['mobile' => $answer->getText()], [
                 'mobile' => 'required|regex:/^\+38 \(\d{3}\) \d{3}-\d{2}-\d{2}$/',
             ]);
-//            Log::info($validator->fails());
-//            preg_match($pattern, $tmp_phone) == 1
-            Log::info("phone1=$tmp_phone");
 
             if ($validator->fails()) {
-                Log::info("phone2=$tmp_phone");
-
                 $this->bot->reply("Phone number entered incorrectly...\n");
                 $this->askPhone();
-//                return;
             } else {
-                $tmp_user = User::where("phone", $tmp_phone)->first();
-                if ($tmp_user == null) {
-
-                    $user = User::create([
-                        'name' => $this->username ?? "$this->id",
-                        'fio_from_telegram' => $this->firstName." ".$this->lastName,
-                        'telegram_chat_id' => $this->id,
-                        'is_admin' => false,
-                        'phone' => $tmp_phone,
-                    ]);
-                    $this->user = $user;
-                    $this->askName();
-//                    $this->user->phone = $tmp_phone;
-//                    $this->user->save();
-                }
-                else
-                {
-                    $this->user = $tmp_user;
-                    $this->user->fio_from_telegram = $this->firstName." ".$this->lastName;
-                    $this->user->telegram_chat_id = $this->id;
-                    $this->user->save();
-                    $tmp_user->fio_from_telegram = $this->firstName." ".$this->lastName;
-                    $tmp_user->telegram_chat_id = $this->id;
-                    $tmp_user->save();
-//                    if ($this->user->name==''|| $this->user->name==null)
-//                    {
-//                        $this->askName();
-//                    }
-//                    $this->mainMenu("We are already familiar with you.");
-                    $this->bot->reply("We are already familiar with you.");
-                }
+                $this->askName();
             }
         });
     }
@@ -135,10 +91,34 @@ class UserConversation extends Conversation
             ->fallback('Thank you for chatting with me:)!');
 
         $this->ask($question, function (Answer $answer) {
-            $this->user->name = $answer->getText();
-            $this->user->save();
-            $this->bot->reply("Now we are familiar with you. Welcome to the ColorIt store bot");
-//            $this->mainMenu("Now we are familiar with you. Welcome to the ColorIt store bot");
+            $tmp_user = User::where("phone", $this->phone)->first();
+            if ($tmp_user == null) {
+
+                $user = User::create([
+                    'name' => $answer->getText(),
+                    'fio_from_telegram' => $this->firstName." ".$this->lastName,
+                    'telegram_chat_id' => $this->id,
+                    'is_admin' => false,
+                    'phone' => $this->phone,
+                ]);
+                $this->user = $user;
+            }
+            else
+            {
+                $this->user = $tmp_user;
+                $this->user->name = $answer->getText();
+                $this->user->fio_from_telegram = $this->firstName." ".$this->lastName;
+                $this->user->telegram_chat_id = $this->id;
+                $this->user->save();
+                $tmp_user->name = $answer->getText();
+                $tmp_user->fio_from_telegram = $this->firstName." ".$this->lastName;
+                $tmp_user->telegram_chat_id = $this->id;
+                $tmp_user->save();
+                $this->mainMenu("We are already familiar with you.");
+//                    $this->bot->reply("We are already familiar with you.");
+            }
+
+            $this->mainMenu("Now we are familiar with you. Welcome to the ColorIt store bot");
         });
     }
     /**

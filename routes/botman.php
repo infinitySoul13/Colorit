@@ -18,9 +18,6 @@ function createUser($bot)
 {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
-    $username = $telegramUser->getUsername();
-    $lastName = $telegramUser->getLastName();
-    $firstName = $telegramUser->getFirstName();
 
     $user = User::where("telegram_chat_id", $id)->first();
     if ($user == null)
@@ -92,7 +89,7 @@ function aboutMenu($bot, $message)
 }
 $botman->hears('/start|Main menu', function ($bot) {
     createUser($bot);
-    mainMenu($bot, 'Main menu');
+//    mainMenu($bot, 'Main menu');
 })->stopsConversation();
 $botman->hears('/stop', function ($bot) {
     mainMenu($bot, 'Main menu');
