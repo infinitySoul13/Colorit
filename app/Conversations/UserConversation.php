@@ -124,7 +124,8 @@ class UserConversation extends Conversation
 //                    {
 //                        $this->askName();
 //                    }
-                    $this->mainMenu("We are already familiar with you.");
+//                    $this->mainMenu("We are already familiar with you.");
+                    $this->bot->reply("We are already familiar with you.");
                 }
             }
         });
@@ -136,7 +137,8 @@ class UserConversation extends Conversation
         $this->ask($question, function (Answer $answer) {
             $this->user->name = $answer->getText();
             $this->user->save();
-            $this->mainMenu("Now we are familiar with you. Welcome to the ColorIt store bot");
+            $this->bot->reply("Now we are familiar with you. Welcome to the ColorIt store bot");
+//            $this->mainMenu("Now we are familiar with you. Welcome to the ColorIt store bot");
         });
     }
     /**

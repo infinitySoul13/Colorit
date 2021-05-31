@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Conversations\OrderConversation;
 use BotMan\BotMan\BotMan;
 use Illuminate\Http\Request;
-use App\Conversations\VinConversation;
-use App\Conversations\UniqueOrderConversation;
+use App\Conversations\UserConversation;
 use App\Conversations\ServiceOrderConversation;
 
 class BotManController extends Controller
@@ -41,5 +40,10 @@ class BotManController extends Controller
     public function orderConversation(BotMan $bot)
     {
         $bot->startConversation(new OrderConversation($bot));
+    }
+
+    public function userConversation(BotMan $bot)
+    {
+        $bot->startConversation(new UserConversation($bot));
     }
 }

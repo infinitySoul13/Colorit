@@ -92,7 +92,7 @@ function aboutMenu($bot, $message)
 }
 $botman->hears('/start|Main menu', function ($bot) {
     createUser($bot);
-//    mainMenu($bot, 'Main menu');
+    mainMenu($bot, 'Main menu');
 })->stopsConversation();
 $botman->hears('/stop', function ($bot) {
     mainMenu($bot, 'Main menu');
@@ -1040,7 +1040,14 @@ $botman->hears('/period {quantity} ([0-9]+)', function ($bot, $quantity, $price)
 //        ]);
 //});
 $botman->hears('/send_an_order|Send an order*', function ($bot) {
+    $telegramUser = $bot->getUser();
+    $id =  $telegramUser->getId();
+    $user = User::where("telegram_chat_id", $id)->first();
+
     $text = "* New order *: \n"
+        . "*Name*:" . $user->name . "\n"
+        . "*Name in Telegram*:" . $user->fio_from_telegram . "\n"
+        . "*Phone*:" . $user->phone . "\n"
         . "* Service *:". $bot->userStorage()->get("service"). "\n"
         . "*The size*:" . $bot->userStorage()->get("size"). "\n"
         . "* Material *:". $bot->userStorage()->get("material"). "\n"
